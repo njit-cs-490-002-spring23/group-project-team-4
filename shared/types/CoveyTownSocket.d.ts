@@ -17,7 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'BattleShipArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -97,26 +97,39 @@ export interface GameMove<MoveType> {
   move: MoveType;
 }
 
-export type TicTacToeGridPosition = 0 | 1 | 2;
+export type BattleShipGridPosition = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
+export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'destroyer';
+
 
 /**
- * Type for a move in TicTacToe
+ * Type for moves in BattleShip
+ * Ship placement coordinate starts from left
  */
-export interface TicTacToeMove {
-  gamePiece: 'X' | 'O';
-  row: TicTacToeGridPosition;
-  col: TicTacToeGridPosition;
+export interface BattleShipPlacementMove {
+  row: BattleShipGridPosition;
+  col: BattleShipGridPosition;
+  shiptype: BattleShip;
+}
+
+export interface BattleShipGuessMove {
+  row: BattleShipGridPosition;
+  col: BattleShipGridPosition;
 }
 
 /**
- * Type for the state of a TicTacToe game
+ * Type for the state of a Battleship game
  * The state of the game is represented as a list of moves, and the playerIDs of the players (x and o)
  * The first player to join the game is x, the second is o
+ * moves will take a record of player guesses
+ * board will keep track of player ship placements
  */
-export interface TicTacToeGameState extends WinnableGameState {
-  moves: ReadonlyArray<TicTacToeMove>;
+export interface BattleShipGameState extends WinnableGameState {
+  moves: ReadonlyArray<BattleShipGuessMove>;
   x?: PlayerID;
   o?: PlayerID;
+  board: ReadOnlyArray<BattleShipPlacementMove>;
+  ships: ReadonlyArray<BattleShip>;
 }
 
 export type InteractableID = string;
@@ -194,7 +207,8 @@ export interface GameMoveCommand<MoveType> {
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
-  CommandType extends GameMoveCommand<TicTacToeMove> ? undefined :
+  CommandType extends GameMoveCommand<BattleShipGuessMove> ? undefined :
+  CommandType extends GameMoveCommand<BattleShipPlacementMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
   never;
 
