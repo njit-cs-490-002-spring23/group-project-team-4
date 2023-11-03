@@ -117,6 +117,10 @@ export interface BattleShipGuessMove {
   col: BattleShipGridPosition;
 }
 
+export interface BattleShipMove{
+  move: BattleShipGuessMove | BattleShipPlacementMove;
+}
+
 /**
  * Type for the state of a Battleship game
  * The state of the game is represented as a list of moves, and the playerIDs of the players (x and o)
@@ -187,7 +191,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<BattleShipMove> | LeaveGameCommand;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -207,8 +211,7 @@ export interface GameMoveCommand<MoveType> {
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
-  CommandType extends GameMoveCommand<BattleShipGuessMove> ? undefined :
-  CommandType extends GameMoveCommand<BattleShipPlacementMove> ? undefined :
+  CommandType extends GameMoveCommand<BattleShipMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
   never;
 

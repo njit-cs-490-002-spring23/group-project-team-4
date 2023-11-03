@@ -1,9 +1,3 @@
-import { BroadcastOperator, Socket } from 'socket.io';
-
-export type SocketData = Record<string, never>;
-export type CoveyTownSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
-export type TownEmitter = BroadcastOperator<ServerToClientEvents, SocketData>;
-export type TownEmitterFactory = (townID: string) => TownEmitter;
 export type TownJoinResponse = {
   /** Unique ID that represents this player * */
   userID: string;
@@ -21,9 +15,9 @@ export type TownJoinResponse = {
   isPubliclyListed: boolean;
   /** Current state of interactables in this town */
   interactables: TypedInteractable[];
-};
+}
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'BattleShipArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -33,7 +27,7 @@ export interface Interactable {
 export type TownSettingsUpdate = {
   friendlyName?: string;
   isPubliclyListed?: boolean;
-};
+}
 
 export type Direction = 'front' | 'back' | 'left' | 'right';
 
@@ -42,9 +36,9 @@ export interface Player {
   id: PlayerID;
   userName: string;
   location: PlayerLocation;
-}
+};
 
-export type XY = { x: number; y: number };
+export type XY = { x: number, y: number };
 
 export interface PlayerLocation {
   /* The CENTER x coordinate of this player's location */
@@ -55,7 +49,7 @@ export interface PlayerLocation {
   rotation: Direction;
   moving: boolean;
   interactableID?: string;
-}
+};
 export type ChatMessage = {
   author: string;
   sid: string;
@@ -65,13 +59,13 @@ export type ChatMessage = {
 
 export interface ConversationArea extends Interactable {
   topic?: string;
-}
+};
 export interface BoundingBox {
   x: number;
   y: number;
   width: number;
   height: number;
-}
+};
 
 export interface ViewingArea extends Interactable {
   video?: string;
@@ -85,7 +79,7 @@ export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER';
  */
 export interface GameState {
   status: GameStatus;
-}
+} 
 
 /**
  * Type for the state of a game that can be won
@@ -103,27 +97,43 @@ export interface GameMove<MoveType> {
   move: MoveType;
 }
 
+export type BattleShipGridPosition = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
+export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'destroyer';
+
+
 /**
- * Type for a move in TicTacToe
- * The row and column are 0-indexed, so the top left square is (0,0) and the bottom right square is (2,2)
+ * Type for moves in BattleShip
+ * Ship placement coordinate starts from left
  */
-export interface TicTacToeMove {
-  gamePiece: 'X' | 'O';
-  row: TicTacToeGridPosition;
-  col: TicTacToeGridPosition;
+export interface BattleShipPlacementMove {
+  row: BattleShipGridPosition;
+  col: BattleShipGridPosition;
+  shiptype: BattleShip;
 }
 
-export type TicTacToeGridPosition = 0 | 1 | 2;
+export interface BattleShipGuessMove {
+  row: BattleShipGridPosition;
+  col: BattleShipGridPosition;
+}
+
+export interface BattleShipMove {
+  move: BattleShipGuessMove | BattleShipPlacementMove;
+}
 
 /**
- * Type for the state of a TicTacToe game
+ * Type for the state of a Battleship game
  * The state of the game is represented as a list of moves, and the playerIDs of the players (x and o)
  * The first player to join the game is x, the second is o
+ * moves will take a record of player guesses
+ * board will keep track of player ship placements
  */
-export interface TicTacToeGameState extends WinnableGameState {
-  moves: ReadonlyArray<TicTacToeMove>;
+export interface BattleShipGameState extends WinnableGameState {
+  moves: ReadonlyArray<BattleShipGuessMove>;
   x?: PlayerID;
   o?: PlayerID;
+  board: ReadOnlyArray<BattleShipPlacementMove>;
+  ships: ReadonlyArray<BattleShip>;
 }
 
 export type InteractableID = string;
@@ -181,12 +191,8 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =
-  | ViewingAreaUpdateCommand
-  | JoinGameCommand
-  | GameMoveCommand<TicTacToeMove>
-  | LeaveGameCommand;
-export interface ViewingAreaUpdateCommand {
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<BattleShipMove> | LeaveGameCommand;
+export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
 }
@@ -202,23 +208,19 @@ export interface GameMoveCommand<MoveType> {
   gameID: GameInstanceID;
   move: MoveType;
 }
-export type InteractableCommandReturnType<CommandType extends InteractableCommand> =
-  CommandType extends JoinGameCommand
-    ? { gameID: string }
-    : CommandType extends ViewingAreaUpdateCommand
-    ? undefined
-    : CommandType extends GameMoveCommand<TicTacToeMove>
-    ? undefined
-    : CommandType extends LeaveGameCommand
-    ? undefined
-    : never;
+export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
+  CommandType extends JoinGameCommand ? { gameID: string}:
+  CommandType extends ViewingAreaUpdateCommand ? undefined :
+  CommandType extends GameMoveCommand<BattleShipMove> ? undefined :
+  CommandType extends LeaveGameCommand ? undefined :
+  never;
 
 export type InteractableCommandResponse<MessageType> = {
   commandID: CommandID;
   interactableID: InteractableID;
   error?: string;
   payload?: InteractableCommandResponseMap[MessageType];
-};
+}
 
 export interface ServerToClientEvents {
   playerMoved: (movedPlayer: Player) => void;
