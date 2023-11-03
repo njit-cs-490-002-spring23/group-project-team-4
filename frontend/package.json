@@ -19,7 +19,6 @@
     "@types/fscreen": "^1.0.1",
     "@types/jest": "^28.1.5",
     "@types/lodash.throttle": "^4.1.7",
-    "@types/node": "^18.0.3",
     "@types/react": "^17.0.60",
     "@types/react-dom": "^17.0.20",
     "@types/react-router-dom": "^5.3.3",
@@ -52,10 +51,15 @@
     "typed-emitter": "^2.1.0",
     "typescript": "^4.9.5"
   },
+  "engines": {
+    "node": "18.x.x",
+    "npm": "9.x.x"
+  },
   "scripts": {
     "prestart": "npm run client",
     "start": "next start",
     "build": "next build",
+    "export": "next export",
     "dev": "next dev",
     "test": "cross-env DEBUG_PRINT_LIMIT=0 jest",
     "test-watch": "jest --watch",
@@ -88,6 +92,7 @@
     "@testing-library/react": "^12.1.0",
     "@testing-library/user-event": "^14.2.1",
     "@types/linkify-it": "^3.0.2",
+    "@types/node": "^20.8.4",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",
