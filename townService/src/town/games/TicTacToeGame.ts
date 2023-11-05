@@ -23,6 +23,40 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       status: 'IN_PROGRESS'
     });
   }
+  /*
+  private get _board() {
+    const { moves } = this.state;
+    const board = [
+      
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+    for (const move of moves) {
+      board[move.row][move.col] = 1;
+    }
+    return board;
+  }*/
+  public isHit( guess: BattleShipGuessMove): boolean{
+    //to check if a ship is hit
+    const board = this.state.board;
+    for (const placement of board){
+      if (placement.row === guess.row && placement.col === guess.col){
+        return true;
+      }
+  
+  
+    }
+    return false;
+  }
+
 
   private _checkForGameEnding() {
     // Implement logic to check if all ships of a player are sunk
@@ -45,7 +79,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     // Validate the move
     // Apply the move
   }
-  public applyMove(move: GameMove<BattleShipMove>): void {
+  public applyGuessMove(move: GameMove<BattleShipMove>): void {
     // Validate the move
     // Apply the move
   }
