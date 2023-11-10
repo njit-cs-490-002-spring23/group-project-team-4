@@ -115,9 +115,10 @@ export interface BattleShipPlacementMove {
 export interface BattleShipGuessMove {
   row: BattleShipGridPosition;
   col: BattleShipGridPosition;
+  player: 'X' | 'O'
 }
 
-export interface BattleShipMove {
+export interface BattleShipMove{
   move: BattleShipGuessMove | BattleShipPlacementMove;
 }
 
@@ -132,7 +133,8 @@ export interface BattleShipGameState extends WinnableGameState {
   moves: ReadonlyArray<BattleShipGuessMove>;
   x?: PlayerID;
   o?: PlayerID;
-  board: ReadOnlyArray<BattleShipPlacementMove>;
+  x_board: ReadOnlyArray<BattleShipPlacementMove>;
+  o_board: ReadOnlyArray<BattleShipPlacementMove>;
   ships: ReadonlyArray<BattleShip>;
 }
 
