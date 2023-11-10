@@ -45,10 +45,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     // Validate the move
     // Apply the move
   }
-  public applyMove(move: GameMove<BattleShipMove>): void {
-    // Validate the move
-    // Apply the move
-  }
+
 
   protected _join(player: Player): void {
     // Add player joining logic specific to Battleship
