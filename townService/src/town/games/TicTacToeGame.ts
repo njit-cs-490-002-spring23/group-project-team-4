@@ -38,7 +38,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     }
     return board;
   }*/
-  public isHit(move: GameMove<BattleShipMove>): boolean{
+  private _isHit(move: GameMove<BattleShipMove>): boolean{
     //to check if a ship is hit
     const board = this.state.board;
     for (const placement of board){
@@ -71,21 +71,32 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
 
   public applyMove(move: GameMove<BattleShipMove>): void {
     /* * placement move
-    */
-    if(move.move.shiptype !== undefined){
-      this._validatePlacementMove(move);
-      if(this.turn === 'X'){
-        this.state.x_ships = this.state.x_ships.filter(ship => ship !== move.move.shiptype);
-        this.state.x_board = [this.state.x_board, move];
-      }
-      else{
-        this.state.o_ships = this.state.o_ships.filter(ship => ship !== move.move.shiptype);
-        this.state.o_board = [this.state.o_board, move];
+    */if(this.state.status !== 'IN_PROGRESS'){
+
+    }
+    else{
+      if(move.move.shiptype !== undefined){
+        this._validatePlacementMove(move);
+        if(this.state.turn === 'X'){
+          this.state.x_ships = this.state.x_ships.filter(ship => ship !== move.move.shiptype);
+          this.state.x_board = this.state.x_board.concat(move.move);
+        }
+        else{
+          this.state.o_ships = this.state.o_ships.filter(ship => ship !== move.move.shiptype);
+          this.state.o_board = this.state.o_board.concat(move.move);
+        }
+      } /* * guess move
+      */else {
+        this._validateGuessMove(move);
+        if(!this._isHit(move)){
+          /**update turn */
+        }
+        this.state.moves = this.state.moves.concat(move.move);
+        this._checkForGameEnding();
       }
     }
-    /* * guess move
-    */
-    if(move.move.)
+    
+    
     // Validate the move
     // Apply the move
   }
