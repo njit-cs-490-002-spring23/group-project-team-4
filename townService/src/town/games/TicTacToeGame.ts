@@ -7,7 +7,7 @@ import InvalidParametersError, {
   PLAYER_NOT_IN_GAME_MESSAGE,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import { GameMove, BattleShipGameState, BattleShip,BattleShipGuessMove,BattleShipPlacementMove, BattleShipMove } from '../../types/CoveyTownSocket';
+import {GameState, GameMove, BattleShipGameState, BattleShip,BattleShipGuessMove,BattleShipPlacementMove, BattleShipMove } from '../../types/CoveyTownSocket';
 import Game from './Game';
 
 /**
@@ -22,7 +22,26 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       ships: [],
       status: 'IN_PROGRESS'
     });
+    
+  } 
+
+  private static initializeBoard(): number[][] {
+    const board:number[][] = [
+      
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+    return board;
   }
+ 
   /*
   private get _board() {
     const { moves } = this.state;
@@ -61,8 +80,24 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
   private _checkForGameEnding() {
     // Implement logic to check if all ships of a player are sunk
   }
+  
+  private _updateTurn(){
+    this.state.
 
+  }
   private _validateGuessMove(move: BattleShipGuessMove) {
+
+    //validate the move by checking on the board array to see if the
+    //tile was already touched or not
+
+    if(this.state.status !=="IN_PROGRESS"){
+      throw GAME_NOT_IN_PROGRESS_MESSAGE;
+    }
+    if(this.)
+    //0 the board is empty
+    //1 a ship is placed
+    //2 an empty tile that was already guessed & 3 is hit 
+
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
