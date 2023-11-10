@@ -18,7 +18,8 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
   public constructor() {
     super({
       moves: [],
-      board: undefined,
+      x_board: undefined,
+      o_board: undefined,
       ships: [],
       status: 'IN_PROGRESS'
     });
@@ -44,7 +45,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     }
     return board;
   }*/
-  public isHit( guess: BattleShipGuessMove): boolean{
+  public isHit( guess: BattleShipMove): boolean{
     //to check if a ship is hit
     const board = this.state.board;
     for (const placement of board){
@@ -62,13 +63,13 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     // Implement logic to check if all ships of a player are sunk
   }
 
-  private _validateGuessMove(move: BattleShipGuessMove) {
+  private _validateGuessMove(move: BattleShipMove) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
   }
-  private _validatePlacementMove(move: BattleShipPlacementMove) {
+  private _validatePlacementMove(move: BattleShipMove) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
@@ -76,6 +77,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
   }
 
   public applyMove(move: GameMove<BattleShipMove>): void {
+    this.state
     // Validate the move
     // Apply the move
   }
