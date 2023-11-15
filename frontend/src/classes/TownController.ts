@@ -32,7 +32,7 @@ import GameAreaController, { GameEventTypes } from './interactable/GameAreaContr
 import InteractableAreaController, {
   BaseInteractableEventMap,
 } from './interactable/InteractableAreaController';
-import TicTacToeAreaController from './interactable/TicTacToeAreaController';
+import TicTacToeAreaController from './interactable/BattleShipAreaController';
 import ViewingAreaController from './interactable/ViewingAreaController';
 import PlayerController from './PlayerController';
 
