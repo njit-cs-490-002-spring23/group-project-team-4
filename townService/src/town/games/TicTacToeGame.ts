@@ -1,5 +1,5 @@
 import Player from '../../lib/Player';
-import { GameMove, BattleShipGameState, BattleShipMove } from '../../types/CoveyTownSocket';
+import { GameMove, BattleShipGameState, BattleShipMove, BattleShipGridPosition } from '../../types/CoveyTownSocket';
 import Game from './Game';
 
 /**
@@ -42,7 +42,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     //to check if a ship is hit
     const board = this.state.board;
     for (const placement of board){
-      if (placement.row === guess.row && placement.col === guess.col){
+      if (placement.row === move.row && placement.col === move.col){
         return true;
       }
   
@@ -77,13 +77,77 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     else{
       if(move.move.shiptype !== undefined){
         this._validatePlacementMove(move);
-        if(this.state.turn === 'X'){
+        var _impliedMove;
+        var _maxIndex;
+        if(move.move.player === 'X'){
           this.state.x_ships = this.state.x_ships.filter(ship => ship !== move.move.shiptype);
           this.state.x_board = this.state.x_board.concat(move.move);
+          switch (move.move.shiptype) {
+            case 'battleship':
+              _maxIndex = 5;
+              break;
+            case 'carrier':
+              _maxIndex = 4;
+              break;
+            case 'criuser':
+              _maxIndex = 3;
+              break;
+            case 'destroyer':
+              _maxIndex = 3;
+              break;
+            case 'submarine':
+              _maxIndex = 2;
+              break;
+            default:
+              _maxIndex = 0;
+              break;
+          }
+          for(var i = 1; i < _maxIndex; i+=1){
+            const _column = <BattleShipGridPosition>(move.move.col + i);
+            _impliedMove = {
+              row: move.move.row, 
+              col: _column,
+              shiptype: move.move.shiptype,
+              player: move.move.player,
+             };
+             move.move = _impliedMove;
+             this.state.x_board = this.state.x_board.concat(move.move);
+          }
         }
         else{
           this.state.o_ships = this.state.o_ships.filter(ship => ship !== move.move.shiptype);
           this.state.o_board = this.state.o_board.concat(move.move);
+          switch (move.move.shiptype) {
+            case 'battleship':
+              _maxIndex = 5;
+              break;
+            case 'carrier':
+              _maxIndex = 4;
+              break;
+            case 'criuser':
+              _maxIndex = 3;
+              break;
+            case 'destroyer':
+              _maxIndex = 3;
+              break;
+            case 'submarine':
+              _maxIndex = 2;
+              break;
+            default:
+              _maxIndex = 0;
+              break;
+          }
+          for(var i = 1; i < _maxIndex; i+=1){
+            const _column = <BattleShipGridPosition>(move.move.col + i);
+            _impliedMove = {
+              row: move.move.row, 
+              col: _column,
+              shiptype: move.move.shiptype,
+              player: move.move.player,
+             };
+             move.move = _impliedMove;
+             this.state.x_board = this.state.x_board.concat(move.move);
+          }
         }
       } /* * guess move
       */else {
