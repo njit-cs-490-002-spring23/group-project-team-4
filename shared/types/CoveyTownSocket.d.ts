@@ -105,16 +105,13 @@ export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'd
 /**
  * Type for moves in BattleShip
  * Ship placement coordinate starts from left
+ * player for who made the move
  */
-export interface BattleShipPlacementMove {
+export interface BattleShipMove {
   row: BattleShipGridPosition;
   col: BattleShipGridPosition;
-  shiptype: BattleShip;
-}
-
-export interface BattleShipGuessMove {
-  row: BattleShipGridPosition;
-  col: BattleShipGridPosition;
+  shiptype: BattleShip | undefined;
+  player: 'X' | 'O'
 }
 
 /**
@@ -125,10 +122,11 @@ export interface BattleShipGuessMove {
  * board will keep track of player ship placements
  */
 export interface BattleShipGameState extends WinnableGameState {
-  moves: ReadonlyArray<BattleShipGuessMove>;
+  moves: ReadonlyArray<BattleShipMove>;
   x?: PlayerID;
   o?: PlayerID;
-  board: ReadOnlyArray<BattleShipPlacementMove>;
+  x_board: ReadOnlyArray<BattleShipMove>;
+  o_board: ReadOnlyArray<BattleShipMove>;
   ships: ReadonlyArray<BattleShip>;
 }
 
@@ -187,7 +185,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<BattleShipMove> | LeaveGameCommand;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -207,8 +205,7 @@ export interface GameMoveCommand<MoveType> {
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
-  CommandType extends GameMoveCommand<BattleShipGuessMove> ? undefined :
-  CommandType extends GameMoveCommand<BattleShipPlacementMove> ? undefined :
+  CommandType extends GameMoveCommand<BattleShipMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
   never;
 
