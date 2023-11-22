@@ -12,7 +12,7 @@ export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
 
 export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 
-export type BattleShipCell = 1 | 0 | undefined;
+export type BattleShipCell = 0 | 1 | 2 | 3 | BattleShip;
 export type BattleShipEvents = GameEventTypes & {
   boardChanged: (board: BattleShipCell[][]) => void;
   turnChanged: (isOurTurn: boolean) => void;
@@ -41,15 +41,14 @@ export default class BattleShipAreaController extends GameAreaController<
   /**
    * Returns the current state of the board.
    *
-   * The board is a 10x10 array of BattleShipCell, which is either '1', '0', or undefined, 
-   * describing 'hit', 'miss', and 'unattacked' respectively.
+   * The board is a 10x10 array of BattleShipCell, which is either '0', '1', '2', or '3', 
+   * describing 'unattacked', 'placed', 'hit', and 'miss' respectively.
    *
    * The 2-dimensional array is indexed by row and then column, so board[0][0] is the top-left cell,
-   * and board[2][2] is the bottom-right cell
+   * and board[9][9] is the bottom-right cell
    */
   get board(): BattleShipCell[][] {
-    return this._currentBoard;
-    //TODO
+    return this._currentBoard.map(row => row.map(cell => cell as BattleShipCell));
   }
 
   /**
@@ -157,7 +156,7 @@ export default class BattleShipAreaController extends GameAreaController<
     if (this.players.includes(this._townController.ourPlayer)) {
       return true;
     }
-    return false; //TODO
+    return false; //TODO 
   }
 
   /**
@@ -165,7 +164,7 @@ export default class BattleShipAreaController extends GameAreaController<
    *
    * Throws an error PLAYER_NOT_IN_GAME_ERROR if the current player is not a player in this game
    */
-  get gamePiece(): 'X' | 'O' {
+  get playerPiece(): 'X' | 'O' {
     if (this.isPlayer) {
       if (this._townController.ourPlayer === this.x) {
         return 'X';
@@ -217,19 +216,20 @@ export default class BattleShipAreaController extends GameAreaController<
     if (newMoveCount && newMoveCount > this.moveCount) {
       const newBoard = this.board;
       for (let newMove = 0; newMove < newMoveCount; newMove += 1) {
-        if (
+        if ( // if the move is valid, update the board
           newModel.game?.state.moves[newMove].row !== undefined &&
           newModel.game?.state.moves[newMove].col !== undefined
         ) {
           const row = newModel.game?.state.moves[newMove].row;
           const col = newModel.game?.state.moves[newMove].col;
-          newBoard[row][col] = newModel.game?.state.moves[newMove].gamePiece;
+          // newBoard[row][col] = newModel.game?.state.moves[newMove].shiptype;      
+          newBoard[row][col] = newModel.game?.state.moves[newMove].shiptype as BattleShip;
         }
       }
       this.emit('boardChanged', newBoard);
-      if (newMoveCount % 2 == 0 && this.gamePiece === 'X') {
+      if (newMoveCount % 2 == 0 && this.playerPiece === 'X') {
         this.emit('turnChanged', true);
-      } else if (newMoveCount % 2 == 1 && this.gamePiece === 'O') {
+      } else if (newMoveCount % 2 == 1 && this.playerPiece === 'O') {
         this.emit('turnChanged', true);
       } else {
         this.emit('turnChanged', false);
@@ -254,11 +254,11 @@ export default class BattleShipAreaController extends GameAreaController<
     if (this.status !== 'IN_PROGRESS' || this._instanceID === undefined) {
       throw new Error(NO_GAME_IN_PROGRESS_ERROR);
     } else {
-      const gamePiece = this.gamePiece;
+      const playerPiece = this.playerPiece;
       this._townController.sendInteractableCommand(this.id, {
         gameID: this._instanceID,
         type: 'GameMove',
-        move: { gamePiece, row, col },
+        move: { row, col, shiptype: undefined, player: playerPiece },
       });
     }
     return;
