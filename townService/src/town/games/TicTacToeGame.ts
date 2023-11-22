@@ -74,8 +74,8 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
 
 
   private _checkForGameEnding() {
-    const xHits = this._countHits(this.state.x_board, this.state.moves);
-    const oHits = this._countHits(this.state.o_board, this.state.moves);
+    const xHits = this._countHitsX();
+    const oHits = this._countHitsO();
   
     if (xHits >= 17 || oHits >= 17) {
       this.state.status = 'OVER';
@@ -83,14 +83,30 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     }
   }
   
-  private _countHits(board: BattleShipGridPosition[], moves: GameMove<BattleShipMove>[]): number {
-    let hitCount = 0;
-    for (const move of moves) {
-      if (board.some(position => position.row === move.row && position.col === move.col)) {
-        hitCount++;
+  private _countHitsX(): number {
+    let hitCountX = 0;
+    let board = this.state.x_board;
+    for (const move of this.state.moves) {
+      if(move.player === 'O'){
+        if (board.some((position: BattleShipGridPosition) => position === move.row && position === move.col)) {
+          hitCountX++;
+        }
       }
     }
-    return hitCount;
+    return hitCountX;
+  }
+
+  private _countHitsO(): number {
+    let hitCountO = 0;
+    let board = this.state.x_board;
+    for (const move of this.state.moves) {
+      if(move.player === 'X'){
+        if (board.some((position: BattleShipGridPosition) => position === move.row && position === move.col)) {
+          hitCountO++;
+        }
+      }
+    }
+    return hitCountO;
   }
   
 
