@@ -22,7 +22,8 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       o_board: undefined,
       x_ships: ['battleship','carrier','criuser','destroyer','submarine'],
       o_ships: ['battleship','carrier','criuser','destroyer','submarine'],
-      status: 'IN_PROGRESS'
+      status: 'IN_PROGRESS',
+      turn: undefined,
     });
   }
   /*
@@ -60,7 +61,6 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
   }
 
   private _updateTurn(){
-    this.state.
     //the turn will be set to X by default in the beggineng of the game 
     if(this.state.turn === 'X'){
       this.state.turn = 'O'
@@ -114,7 +114,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
 
-    if (move.col > 9 || move.row > 9 ){
+    if (move.move.col > 9 || move.move.row > 9 ){
       throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
     }
     let board;
@@ -125,7 +125,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       board = this.state.o_board;
    }
     for (const m of board)
-    if(move.row===m.row &&move.col===m.col
+    if(move.move.row===m.row && move.move.col===m.col
        ){
       throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
     }
