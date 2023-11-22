@@ -105,21 +105,13 @@ export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'd
 /**
  * Type for moves in BattleShip
  * Ship placement coordinate starts from left
+ * player for who made the move
  */
-export interface BattleShipPlacementMove {
+export interface BattleShipMove {
   row: BattleShipGridPosition;
   col: BattleShipGridPosition;
-  shiptype: BattleShip;
-}
-
-export interface BattleShipGuessMove {
-  row: BattleShipGridPosition;
-  col: BattleShipGridPosition;
+  shiptype: BattleShip | undefined;
   player: 'X' | 'O'
-}
-
-export interface BattleShipMove{
-  move: BattleShipGuessMove | BattleShipPlacementMove;
 }
 
 /**
@@ -130,11 +122,11 @@ export interface BattleShipMove{
  * board will keep track of player ship placements
  */
 export interface BattleShipGameState extends WinnableGameState {
-  moves: ReadonlyArray<BattleShipGuessMove>;
+  moves: ReadonlyArray<BattleShipMove>;
   x?: PlayerID;
   o?: PlayerID;
-  x_board: ReadOnlyArray<BattleShipPlacementMove>;
-  o_board: ReadOnlyArray<BattleShipPlacementMove>;
+  x_board: ReadOnlyArray<BattleShipMove>;
+  o_board: ReadOnlyArray<BattleShipMove>;
   ships: ReadonlyArray<BattleShip>;
 }
 
