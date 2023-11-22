@@ -1,6 +1,6 @@
 import { Button, chakra, Container } from '@chakra-ui/react';
 import React from 'react';
-import TicTacToeAreaController from '../../../../classes/interactable/TicTacToeAreaController';
+import TicTacToeAreaController from '../../../../classes/interactable/BattleShipAreaController';
 
 export type TicTacToeGameProps = {
   gameAreaController: TicTacToeAreaController;
