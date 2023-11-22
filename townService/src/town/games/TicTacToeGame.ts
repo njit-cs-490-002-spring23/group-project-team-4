@@ -1,4 +1,3 @@
-
 import InvalidParametersError, {
   GAME_FULL_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
@@ -6,10 +5,9 @@ import InvalidParametersError, {
   MOVE_NOT_YOUR_TURN_MESSAGE,
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
-  
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import {GameState, GameMove, BattleShipGameState, BattleShip,BattleShipGuessMove,BattleShipPlacementMove, BattleShipMove } from '../../types/CoveyTownSocket';
+import { GameMove, BattleShipGameState, BattleShipMove, BattleShipGridPosition } from '../../types/CoveyTownSocket';
 import Game from './Game';
 
 /**
@@ -26,26 +24,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       o_ships: ['battleship','carrier','criuser','destroyer','submarine'],
       status: 'IN_PROGRESS'
     });
-    
-  } 
-
-  private static initializeBoard(): number[][] {
-    const board:number[][] = [
-      
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ];
-    return board;
   }
- 
   /*
   private get _board() {
     const { moves } = this.state;
@@ -67,7 +46,6 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     }
     return board;
   }*/
-
   private _isHit(move: GameMove<BattleShipMove>): boolean{
     //to check if a ship is hit
     const board = this.state.board;
@@ -93,58 +71,18 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     }
   }
   
-  private _updateTurn(){
-    //the turn will be set to X by default in the beggineng of the game 
-    if (this.state.turn === 'X'){
-      this.state.turn = 'O'
-
-    }
-    else if (this.state.turn === 'O'){
-      this.state.turn = 'X'
-
   private _isShipSunk(shipType: string, board: BattleShipGridPosition[]): boolean {
     // Implement logic to check if a specific type of ship is sunk based on the board state
     // This will require iterating over the board and checking if all positions of this ship type are hit
   }
   
+
   private _validateGuessMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
-    
-    //validate the move by checking on the board array to see if the
-    //tile was already touched or not
-
-    if(this.state.status !=="IN_PROGRESS"){
-      throw GAME_NOT_IN_PROGRESS_MESSAGE;
-    }
-    if(this.state.turn === 'X' && this.state.o_board.length > this.state.x_board.length ){
-
-      throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
-    }
-    else if(this.state.turn === 'O' && this.state.o_board.length < this.state.x_board.length ){
-
-      throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
-    }
-
-    if (move.col > 9 || move.row > 9 ){
-      throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
-    }
-    let board;
-    if (this.state.turn==="X"){
-       board = this.state.x_board;
-    }
-    else if (this.state.turn==="O"){
-      board = this.state.o_board;
-   }
-    for (const m of board)
-    if(move.row===m.row &&move.col===m.col
-       ){
-      throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
-    }
   }
-
   private _validatePlacementMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
@@ -242,6 +180,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
         this._checkForGameEnding();
       }
     }
+    
     
     // Validate the move
     // Apply the move
