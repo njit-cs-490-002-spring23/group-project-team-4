@@ -7,7 +7,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import TicTacToeAreaController from '../../../../classes/interactable/TicTacToeAreaController';
+import TicTacToeAreaController from '../../../../classes/interactable/BattleShipAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
 import { InteractableID } from '../../../../types/CoveyTownSocket';
