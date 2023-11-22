@@ -7,7 +7,7 @@ import InvalidParametersError, {
   PLAYER_NOT_IN_GAME_MESSAGE,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import { GameMove, BattleShipGameState, BattleShip,BattleShipGuessMove,BattleShipPlacementMove, BattleShipMove } from '../../types/CoveyTownSocket';
+import { GameMove, BattleShipGameState, BattleShipMove, BattleShipGridPosition } from '../../types/CoveyTownSocket';
 import Game from './Game';
 
 /**
@@ -18,8 +18,10 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
   public constructor() {
     super({
       moves: [],
-      board: undefined,
-      ships: [],
+      x_board: undefined,
+      o_board: undefined,
+      x_ships: ['battleship','carrier','criuser','destroyer','submarine'],
+      o_ships: ['battleship','carrier','criuser','destroyer','submarine'],
       status: 'IN_PROGRESS'
     });
   }
@@ -44,11 +46,11 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     }
     return board;
   }*/
-  public isHit( guess: BattleShipGuessMove): boolean{
+  private _isHit(move: GameMove<BattleShipMove>): boolean{
     //to check if a ship is hit
     const board = this.state.board;
     for (const placement of board){
-      if (placement.row === guess.row && placement.col === guess.col){
+      if (placement.row === move.row && placement.col === move.col){
         return true;
       }
   
@@ -59,16 +61,29 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
 
 
   private _checkForGameEnding() {
-    // Implement logic to check if all ships of a player are sunk
+    // x_board and o_board store the positions of the ships for player X and O where player1 is X and player 2 is O
+    const allXShipsSunk = this.state.x_ships.every(ship => this._isShipSunk(ship, this.state.x_board));
+    const allOShipsSunk = this.state.o_ships.every(ship => this._isShipSunk(ship, this.state.o_board));
+  
+    if (allXShipsSunk || allOShipsSunk) {
+      this.state.status = 'OVER';
+      this.state.winner = allXShipsSunk ? 'O' : 'X';
+    }
   }
+  
+  private _isShipSunk(shipType: string, board: BattleShipGridPosition[]): boolean {
+    // Implement logic to check if a specific type of ship is sunk based on the board state
+    // This will require iterating over the board and checking if all positions of this ship type are hit
+  }
+  
 
-  private _validateGuessMove(move: BattleShipGuessMove) {
+  private _validateGuessMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
   }
-  private _validatePlacementMove(move: BattleShipPlacementMove) {
+  private _validatePlacementMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
@@ -76,30 +91,107 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
   }
 
   public applyMove(move: GameMove<BattleShipMove>): void {
+    /* * placement move
+    */if(this.state.status !== 'IN_PROGRESS'){
+
+    }
+    else{
+      if(move.move.shiptype !== undefined){
+        this._validatePlacementMove(move);
+        var _impliedMove;
+        var _maxIndex;
+        if(move.move.player === 'X'){
+          this.state.x_ships = this.state.x_ships.filter(ship => ship !== move.move.shiptype);
+          this.state.x_board = this.state.x_board.concat(move.move);
+          switch (move.move.shiptype) {
+            case 'battleship':
+              _maxIndex = 5;
+              break;
+            case 'carrier':
+              _maxIndex = 4;
+              break;
+            case 'criuser':
+              _maxIndex = 3;
+              break;
+            case 'destroyer':
+              _maxIndex = 3;
+              break;
+            case 'submarine':
+              _maxIndex = 2;
+              break;
+            default:
+              _maxIndex = 0;
+              break;
+          }
+          for(var i = 1; i < _maxIndex; i+=1){
+            const _column = <BattleShipGridPosition>(move.move.col + i);
+            _impliedMove = {
+              row: move.move.row, 
+              col: _column,
+              shiptype: move.move.shiptype,
+              player: move.move.player,
+             };
+             move.move = _impliedMove;
+             this.state.x_board = this.state.x_board.concat(move.move);
+          }
+        }
+        else{
+          this.state.o_ships = this.state.o_ships.filter(ship => ship !== move.move.shiptype);
+          this.state.o_board = this.state.o_board.concat(move.move);
+          switch (move.move.shiptype) {
+            case 'battleship':
+              _maxIndex = 5;
+              break;
+            case 'carrier':
+              _maxIndex = 4;
+              break;
+            case 'criuser':
+              _maxIndex = 3;
+              break;
+            case 'destroyer':
+              _maxIndex = 3;
+              break;
+            case 'submarine':
+              _maxIndex = 2;
+              break;
+            default:
+              _maxIndex = 0;
+              break;
+          }
+          for(var i = 1; i < _maxIndex; i+=1){
+            const _column = <BattleShipGridPosition>(move.move.col + i);
+            _impliedMove = {
+              row: move.move.row, 
+              col: _column,
+              shiptype: move.move.shiptype,
+              player: move.move.player,
+             };
+             move.move = _impliedMove;
+             this.state.x_board = this.state.x_board.concat(move.move);
+          }
+        }
+      } /* * guess move
+      */else {
+        this._validateGuessMove(move);
+        if(!this._isHit(move)){
+          /**update turn */
+        }
+        this.state.moves = this.state.moves.concat(move.move);
+        this._checkForGameEnding();
+      }
+    }
+    
+    
     // Validate the move
     // Apply the move
   }
 
-  public applyGuessMove(move: GameMove<BattleShipMove>): void {
-    // Validate the move
-    // Apply the move
-  }
-
-/**
- * Attempts to add a player to the Battleship game. 
- * the first player is assigned as x and the second as o, as to not have to chnage as much from ip2
- * The method checks if the player is already in the game, and if not, assigns them as 'x' or 'o'.
- * The game starts once both 'x' and 'o' have joined.
- * 
- * @param player The player attempting to join the game.
- * @throws
- */
   protected _join(player: Player): void {
     // Check if the player is already in the game
     if (this.state.x === player.id || this.state.o === player.id) {
       throw new InvalidParametersError("Player already in the game");
     }
-  
+
     // Assign the player as 'player1' or 'player2' if the slot is available
     if (!this.state.x) {
       this.state = {
@@ -115,31 +207,22 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       // If both 'player1' and 'player2' are taken, the game is full
       throw new InvalidParametersError("Game is full");
     }
-  
+
     // Start the game if both players have joined
     if (this.state.x && this.state.o) {
       this.state = {
         ...this.state,
         status: 'IN_PROGRESS',
       };
-  
+
     }
   }
-  
-/**
- * Handles a player's departure from the Battleship game.
- * This method checks if the player is currently in the game.
- * If the game has not started (i.e., only one player has joined), it sets the game status to 'WAITING_TO_START'.
- * If the game is in progress, it ends the game and sets the remaining player as the winner.
- * 
- * @param player The player attempting to leave the game.
- * @throws
- */
+
   protected _leave(player: Player): void {
     if (this.state.x !== player.id && this.state.o !== player.id) {
       throw new InvalidParametersError("Player not in game");
     }
-  
+
     // Handles case where the game has not started yet
     if (!this.state.o) {
       this.state = {
@@ -152,7 +235,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       }
       return;
     }
-  
+
     // If player1...x is leaving
     if (this.state.x === player.id) {
       this.state = {
@@ -168,7 +251,8 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       };
     }
   }
-  
 
-  // Additional methods for Battleship game logic (placing ships, handling turns, etc...)
+  // Additional methods for Battleship game logic (e.g., placing ships, handling turns, etc.)
 }
+
+// Define the BattleshipMove and BattleshipGameState types as appropriate
