@@ -38,6 +38,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     }
     return board;
   }*/
+
   private _isHit(move: GameMove<BattleShipMove>): boolean{
     //to check if a ship is hit
     const board = this.state.board;
@@ -53,15 +54,28 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
 
 
   private _checkForGameEnding() {
-    // Implement logic to check if all ships of a player are sunk
+    // x_board and o_board store the positions of the ships for player X and O where player1 is X and player 2 is O
+    const allXShipsSunk = this.state.x_ships.every(ship => this._isShipSunk(ship, this.state.x_board));
+    const allOShipsSunk = this.state.o_ships.every(ship => this._isShipSunk(ship, this.state.o_board));
+  
+    if (allXShipsSunk || allOShipsSunk) {
+      this.state.status = 'OVER';
+      this.state.winner = allXShipsSunk ? 'O' : 'X';
+    }
   }
 
+  private _isShipSunk(shipType: string, board: BattleShipGridPosition[]): boolean {
+    // Implement logic to check if a specific type of ship is sunk based on the board state
+    // This will require iterating over the board and checking if all positions of this ship type are hit
+  }
+  
   private _validateGuessMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
   }
+
   private _validatePlacementMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
@@ -166,14 +180,69 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
   }
 
   protected _join(player: Player): void {
-    // Add player joining logic specific to Battleship
-    // - Ensure only two players can join
-    // - Start the game when two players have joined
+    // Check if the player is already in the game
+    if (this.state.x === player.id || this.state.o === player.id) {
+      throw new InvalidParametersError("Player already in the game");
+    }
+
+    // Assign the player as 'player1' or 'player2' if the slot is available
+    if (!this.state.x) {
+      this.state = {
+        ...this.state,
+        x: player.id,
+      };
+    } else if (!this.state.o) {
+      this.state = {
+        ...this.state,
+        o: player.id,
+      };
+    } else {
+      // If both 'player1' and 'player2' are taken, the game is full
+      throw new InvalidParametersError("Game is full");
+    }
+
+    // Start the game if both players have joined
+    if (this.state.x && this.state.o) {
+      this.state = {
+        ...this.state,
+        status: 'IN_PROGRESS',
+      };
+
+    }
   }
 
   protected _leave(player: Player): void {
-    // Add player leaving logic specific to Battleship
-    // - End the game if a player leaves
+    if (this.state.x !== player.id && this.state.o !== player.id) {
+      throw new InvalidParametersError("Player not in game");
+    }
+
+    // Handles case where the game has not started yet
+    if (!this.state.o) {
+      this.state = {
+        ...this.state,
+        status: 'WAITING_TO_START',
+      };
+      // Reset player1 (which we left as x) if they are the one leaving
+      if (this.state.x === player.id) {
+        this.state.x = undefined;
+      }
+      return;
+    }
+
+    // If player1...x is leaving
+    if (this.state.x === player.id) {
+      this.state = {
+        ...this.state,
+        status: 'OVER',
+        winner: this.state.o,
+      };
+    } else { // If player2...o is leaving
+      this.state = {
+        ...this.state,
+        status: 'OVER',
+        winner: this.state.x,
+      };
+    }
   }
 
   // Additional methods for Battleship game logic (e.g., placing ships, handling turns, etc.)
