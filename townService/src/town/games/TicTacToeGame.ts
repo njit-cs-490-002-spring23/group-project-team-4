@@ -61,20 +61,25 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
 
 
   private _checkForGameEnding() {
-    // x_board and o_board store the positions of the ships for player X and O where player1 is X and player 2 is O
-    const allXShipsSunk = this.state.x_ships.every(ship => this._isShipSunk(ship, this.state.x_board));
-    const allOShipsSunk = this.state.o_ships.every(ship => this._isShipSunk(ship, this.state.o_board));
+    const xHits = this._countHits(this.state.x_board, this.state.moves);
+    const oHits = this._countHits(this.state.o_board, this.state.moves);
   
-    if (allXShipsSunk || allOShipsSunk) {
+    if (xHits >= 17 || oHits >= 17) {
       this.state.status = 'OVER';
-      this.state.winner = allXShipsSunk ? 'O' : 'X';
+      this.state.winner = oHits >= 17 ? 'X' : 'O';
     }
   }
   
-  private _isShipSunk(shipType: string, board: BattleShipGridPosition[]): boolean {
-    // Implement logic to check if a specific type of ship is sunk based on the board state
-    // This will require iterating over the board and checking if all positions of this ship type are hit
+  private _countHits(board: BattleShipGridPosition[], moves: GameMove<BattleShipMove>[]): number {
+    let hitCount = 0;
+    for (const move of moves) {
+      if (board.some(position => position.row === move.row && position.col === move.col)) {
+        hitCount++;
+      }
+    }
+    return hitCount;
   }
+  
   
 
   private _validateGuessMove(move: GameMove<BattleShipMove>) {
