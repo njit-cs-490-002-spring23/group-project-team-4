@@ -46,7 +46,6 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     }
     return board;
   }*/
-  
   private _isHit(move: GameMove<BattleShipMove>): boolean{
     //to check if a ship is hit
     const board = this.state.board;
@@ -77,13 +76,13 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     // This will require iterating over the board and checking if all positions of this ship type are hit
   }
   
+
   private _validateGuessMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
   }
-
   private _validatePlacementMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
