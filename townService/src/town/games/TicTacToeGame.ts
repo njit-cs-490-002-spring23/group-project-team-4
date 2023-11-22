@@ -59,6 +59,19 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     return false;
   }
 
+  private _updateTurn(){
+    this.state.
+    //the turn will be set to X by default in the beggineng of the game 
+    if(this.state.turn === 'X'){
+      this.state.turn = 'O'
+
+    }
+    else if (this.state.turn === 'O'){
+      this.state.turn = 'X'
+
+    }
+  }
+
 
   private _checkForGameEnding() {
     // x_board and o_board store the positions of the ships for player X and O where player1 is X and player 2 is O
@@ -82,12 +95,40 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
+    
   }
   private _validatePlacementMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
+    if(this.state.status !=="IN_PROGRESS"){
+      throw GAME_NOT_IN_PROGRESS_MESSAGE;
+    }
+    if(this.state.turn === 'X' && this.state.o_board.length > this.state.x_board.length ){
+
+      throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
+    }
+    else if(this.state.turn === 'O' && this.state.o_board.length < this.state.x_board.length ){
+
+      throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
+    }
+
+    if (move.col > 9 || move.row > 9 ){
+      throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
+    }
+    let board;
+    if (this.state.turn==="X"){
+       board = this.state.x_board;
+    }
+    else if (this.state.turn==="O"){
+      board = this.state.o_board;
+   }
+    for (const m of board)
+    if(move.row===m.row &&move.col===m.col
+       ){
+      throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
+    }
   }
 
   public applyMove(move: GameMove<BattleShipMove>): void {
