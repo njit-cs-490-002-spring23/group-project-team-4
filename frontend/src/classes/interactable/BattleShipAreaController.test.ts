@@ -12,7 +12,7 @@ import {
 import PlayerController from '../PlayerController';
 import TownController from '../TownController';
 import GameAreaController from './GameAreaController';
-import TicTacToeAreaController from './TicTacToeAreaController';
+import TicTacToeAreaController from './BattleshipAreaController';
 
 describe('[T1] TicTacToeAreaController', () => {
   const ourPlayer = new PlayerController(nanoid(), nanoid(), {

@@ -1,8 +1,9 @@
 import {
   GameArea,
   GameStatus,
-  TicTacToeGameState,
-  TicTacToeGridPosition,
+  BattleShipGameState,
+  BattleShipGridPosition,
+  BattleShip,
 } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import GameAreaController, { GameEventTypes } from './GameAreaController';
@@ -11,34 +12,42 @@ export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
 
 export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 
-export type TicTacToeCell = 'X' | 'O' | undefined;
-export type TicTacToeEvents = GameEventTypes & {
-  boardChanged: (board: TicTacToeCell[][]) => void;
+export type BattleShipCell = 1 | 0 | undefined;
+export type BattleShipEvents = GameEventTypes & {
+  boardChanged: (board: BattleShipCell[][]) => void;
   turnChanged: (isOurTurn: boolean) => void;
 };
 
 /**
- * This class is responsible for managing the state of the Tic Tac Toe game, and for sending commands to the server
+ * This class is responsible for managing the state of the BattleShip game, and for sending commands to the server
  */
-export default class TicTacToeAreaController extends GameAreaController<
-  TicTacToeGameState,
-  TicTacToeEvents
+export default class BattleShipAreaController extends GameAreaController<
+  BattleShipGameState,
+  BattleShipEvents
 > {
   private _currentBoard = [
-    [undefined, undefined, undefined],
-    [undefined, undefined, undefined],
-    [undefined, undefined, undefined],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
 
   /**
    * Returns the current state of the board.
    *
-   * The board is a 3x3 array of TicTacToeCell, which is either 'X', 'O', or undefined.
+   * The board is a 10x10 array of BattleShipCell, which is either '1', '0', or undefined, 
+   * describing 'hit', 'miss', and 'unattacked' respectively.
    *
    * The 2-dimensional array is indexed by row and then column, so board[0][0] is the top-left cell,
    * and board[2][2] is the bottom-right cell
    */
-  get board(): TicTacToeCell[][] {
+  get board(): BattleShipCell[][] {
     return this._currentBoard;
     //TODO
   }
@@ -203,7 +212,7 @@ export default class TicTacToeAreaController extends GameAreaController<
    * If the turn has changed, emits a 'turnChanged' event with true if it is our turn, and false otherwise.
    * If the turn has not changed, does not emit the event.
    */
-  protected _updateFrom(newModel: GameArea<TicTacToeGameState>): void {
+  protected _updateFrom(newModel: GameArea<BattleShipGameState>): void {
     const newMoveCount = newModel.game?.state.moves.length;
     if (newMoveCount && newMoveCount > this.moveCount) {
       const newBoard = this.board;
@@ -241,7 +250,7 @@ export default class TicTacToeAreaController extends GameAreaController<
    * @param row Row of the move
    * @param col Column of the move
    */
-  public async makeMove(row: TicTacToeGridPosition, col: TicTacToeGridPosition) {
+  public async makeMove(row: BattleShipGridPosition, col: BattleShipGridPosition) {
     if (this.status !== 'IN_PROGRESS' || this._instanceID === undefined) {
       throw new Error(NO_GAME_IN_PROGRESS_ERROR);
     } else {
