@@ -1,4 +1,3 @@
-
 import InvalidParametersError, {
   GAME_FULL_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
@@ -6,10 +5,9 @@ import InvalidParametersError, {
   MOVE_NOT_YOUR_TURN_MESSAGE,
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
-  
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import {GameState, GameMove, BattleShipGameState, BattleShip, BattleShipMove, BattleShipGridPosition } from '../../types/CoveyTownSocket';
+import { GameMove, BattleShipGameState, BattleShipMove, BattleShipGridPosition } from '../../types/CoveyTownSocket';
 import Game from './Game';
 
 /**
@@ -26,26 +24,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       o_ships: ['battleship','carrier','criuser','destroyer','submarine'],
       status: 'IN_PROGRESS'
     });
-    
-  } 
-
-  private static initializeBoard(): number[][] {
-    const board:number[][] = [
-      
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ];
-    return board;
   }
- 
   /*
   private get _board() {
     const { moves } = this.state;
@@ -67,7 +46,6 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     }
     return board;
   }*/
-
   private _isHit(move: GameMove<BattleShipMove>): boolean{
     //to check if a ship is hit
     const board = this.state.board;
@@ -93,15 +71,6 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     }
   }
   
-  private _updateTurn(){
-    //the turn will be set to X by default in the beggineng of the game 
-    if (this.state.turn === 'X'){
-      this.state.turn = 'O'
-
-    }
-    else if (this.state.turn === 'O'){
-      this.state.turn = 'X'
-
   private _isShipSunk(shipType: string, board: BattleShipGridPosition[]): boolean {
     // Implement logic to check if a specific type of ship is sunk based on the board state
     // This will require iterating over the board and checking if all positions of this ship type are hit
@@ -211,6 +180,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
         this._checkForGameEnding();
       }
     }
+    
     
     // Validate the move
     // Apply the move
