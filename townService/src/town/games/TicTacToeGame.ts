@@ -115,13 +115,6 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
-    
-  }
-  private _validatePlacementMove(move: GameMove<BattleShipMove>) {
-    // Implement validation logic for a move in Battleship
-    // - Check if it's the player's turn
-    // - Check if the move is within the bounds of the board
-    // - Check if the game is in progress
     if(this.state.status !=="IN_PROGRESS"){
       throw GAME_NOT_IN_PROGRESS_MESSAGE;
     }
@@ -149,6 +142,13 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
        ){
       throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
     }
+    
+  }
+  private _validatePlacementMove(move: GameMove<BattleShipMove>) {
+    // Implement validation logic for a move in Battleship
+    // - Check if it's the player's turn
+    // - Check if the move is within the bounds of the board
+    // - Check if the game is in progress
   }
 
   public applyMove(move: GameMove<BattleShipMove>): void {
