@@ -14,7 +14,7 @@ import Game from './Game';
  * A BattleshipGame is a Game that implements the rules of Battleship.
  * @see https://en.wikipedia.org/wiki/Battleship_(game)
  */
-export default class BattleshipGame extends Game<BattleShipGameState, BattleShipMove> {
+export default class BattleShipGame extends Game<BattleShipGameState, BattleShipMove> {
   public constructor() {
     super({
       moves: [],
@@ -22,7 +22,8 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
       o_board: undefined,
       x_ships: ['battleship','carrier','criuser','destroyer','submarine'],
       o_ships: ['battleship','carrier','criuser','destroyer','submarine'],
-      status: 'IN_PROGRESS'
+      status: 'IN_PROGRESS',
+      turn: undefined,
     });
   }
   /*
@@ -59,21 +60,53 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     return false;
   }
 
+  private _updateTurn(){
+    //the turn will be set to X by default in the beggineng of the game 
+    if(this.state.turn === 'X'){
+      this.state.turn = 'O'
+
+    }
+    else if (this.state.turn === 'O'){
+      this.state.turn = 'X'
+
+    }
+  }
+
 
   private _checkForGameEnding() {
-    // x_board and o_board store the positions of the ships for player X and O where player1 is X and player 2 is O
-    const allXShipsSunk = this.state.x_ships.every(ship => this._isShipSunk(ship, this.state.x_board));
-    const allOShipsSunk = this.state.o_ships.every(ship => this._isShipSunk(ship, this.state.o_board));
+    const xHits = this._countHitsX();
+    const oHits = this._countHitsO();
   
-    if (allXShipsSunk || allOShipsSunk) {
+    if (xHits >= 17 || oHits >= 17) {
       this.state.status = 'OVER';
-      this.state.winner = allXShipsSunk ? 'O' : 'X';
+      this.state.winner = oHits >= 17 ? 'X' : 'O';
     }
   }
   
-  private _isShipSunk(shipType: string, board: BattleShipGridPosition[]): boolean {
-    // Implement logic to check if a specific type of ship is sunk based on the board state
-    // This will require iterating over the board and checking if all positions of this ship type are hit
+  private _countHitsX(): number {
+    let hitCountX = 0;
+    let board = this.state.x_board;
+    for (const move of this.state.moves) {
+      if(move.player === 'O'){
+        if (board.some((position: BattleShipGridPosition) => position === move.row && position === move.col)) {
+          hitCountX++;
+        }
+      }
+    }
+    return hitCountX;
+  }
+
+  private _countHitsO(): number {
+    let hitCountO = 0;
+    let board = this.state.x_board;
+    for (const move of this.state.moves) {
+      if(move.player === 'X'){
+        if (board.some((position: BattleShipGridPosition) => position === move.row && position === move.col)) {
+          hitCountO++;
+        }
+      }
+    }
+    return hitCountO;
   }
   
 
@@ -82,6 +115,34 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
+    if(this.state.status !=="IN_PROGRESS"){
+      throw GAME_NOT_IN_PROGRESS_MESSAGE;
+    }
+    if(this.state.turn === 'X' && this.state.o_board.length > this.state.x_board.length ){
+
+      throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
+    }
+    else if(this.state.turn === 'O' && this.state.o_board.length < this.state.x_board.length ){
+
+      throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
+    }
+
+    if (move.move.col > 9 || move.move.row > 9 ){
+      throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
+    }
+    let board;
+    if (this.state.turn==="X"){
+       board = this.state.x_board;
+    }
+    else if (this.state.turn==="O"){
+      board = this.state.o_board;
+   }
+    for (const m of board)
+    if(move.move.row===m.row && move.move.col===m.col
+       ){
+      throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
+    }
+    
   }
   private _validatePlacementMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship

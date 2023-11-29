@@ -1,7 +1,7 @@
 import { createPlayerForTesting } from '../../TestUtils';
 import Player from '../../lib/Player';
 import { TicTacToeMove } from '../../types/CoveyTownSocket';
-import TicTacToeGame from './TicTacToeGame';
+import TicTacToeGame from './BattleShipGame';
 
 describe('TicTacToeGame', () => {
   let game: TicTacToeGame;
