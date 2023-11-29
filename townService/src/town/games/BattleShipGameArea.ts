@@ -13,14 +13,14 @@ import {
 } from '../../types/CoveyTownSocket';
 import GameArea from './GameArea';
 import BattleShip from './BattleShipGame';
-import BattleshipGame from './BattleShipGame';
+import BattleShipGame from './BattleShipGame';
 
 /**
  * A BattleShipGameArea is a GameArea that hosts a BattleShipGame.
  * @see BattleShipGame
  * @see GameArea
  */
-export default class TicTacToeGameArea extends GameArea<BattleShipGame> {
+export default class BattleShipGameArea extends GameArea<BattleShipGame> {
   protected getType(): InteractableType {
     return 'BattleShipArea';
   }

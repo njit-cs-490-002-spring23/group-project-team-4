@@ -38,7 +38,7 @@ export interface Player {
   location: PlayerLocation;
 };
 
-export type XY = { x: number, y: number };
+export type XY = { x: number; y: number };
 
 export interface PlayerLocation {
   /* The CENTER x coordinate of this player's location */
@@ -129,6 +129,7 @@ export interface BattleShipGameState extends WinnableGameState {
   o_board: ReadOnlyArray<BattleShipMove>;
   x_ships: ReadonlyArray<BattleShip>;
   o_ships: ReadonlyArray<BattleShip>;
+  turn: 'X' | 'O' | undefined;
 }
 
 export type InteractableID = string;
