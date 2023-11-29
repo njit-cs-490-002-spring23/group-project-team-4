@@ -14,7 +14,7 @@ import Game from './Game';
  * A BattleshipGame is a Game that implements the rules of Battleship.
  * @see https://en.wikipedia.org/wiki/Battleship_(game)
  */
-export default class BattleshipGame extends Game<BattleShipGameState, BattleShipMove> {
+export default class BattleShipGame extends Game<BattleShipGameState, BattleShipMove> {
   public constructor() {
     super({
       moves: [],

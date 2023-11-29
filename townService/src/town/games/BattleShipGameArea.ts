@@ -9,22 +9,23 @@ import {
   InteractableCommand,
   InteractableCommandReturnType,
   InteractableType,
-  TicTacToeGameState,
+  BattleShipGameState,
 } from '../../types/CoveyTownSocket';
 import GameArea from './GameArea';
-import TicTacToeGame from './TicTacToeGame';
+import BattleShip from './BattleShipGame';
+import BattleshipGame from './BattleShipGame';
 
 /**
- * A TicTacToeGameArea is a GameArea that hosts a TicTacToeGame.
- * @see TicTacToeGame
+ * A BattleShipGameArea is a GameArea that hosts a BattleShipGame.
+ * @see BattleShipGame
  * @see GameArea
  */
-export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
+export default class TicTacToeGameArea extends GameArea<BattleShipGame> {
   protected getType(): InteractableType {
-    return 'TicTacToeArea';
+    return 'BattleShipArea';
   }
 
-  private _stateUpdated(updatedState: GameInstance<TicTacToeGameState>) {
+  private _stateUpdated(updatedState: GameInstance<BattleShipGameState>) {
     if (updatedState.state.status === 'OVER') {
       // If we haven't yet recorded the outcome, do so now.
       const gameID = this._game?.id;
@@ -92,7 +93,7 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
       let game = this._game;
       if (!game || game.state.status === 'OVER') {
         // No game in progress, make a new one
-        game = new TicTacToeGame();
+        game = new BattleShipGame();
         this._game = game;
       }
       game.join(player);
