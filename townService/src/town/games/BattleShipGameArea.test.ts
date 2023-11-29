@@ -13,8 +13,8 @@ import {
   TicTacToeMove,
   TownEmitter,
 } from '../../types/CoveyTownSocket';
-import TicTacToeGameArea from './TicTacToeGameArea';
-import * as TicTacToeGameModule from './TicTacToeGame';
+import TicTacToeGameArea from './BattleShipGameArea';
+import * as TicTacToeGameModule from './BattleShipGame';
 import Game from './Game';
 
 class TestingGame extends Game<TicTacToeGameState, TicTacToeMove> {
