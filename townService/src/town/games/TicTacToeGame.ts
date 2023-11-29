@@ -81,11 +81,8 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
     return hitCount;
   }
   
-<<<<<<< HEAD
   
 
-=======
->>>>>>> 8375dda1bdd968b9da7f22967a1957e15b11ea76
   private _validateGuessMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
