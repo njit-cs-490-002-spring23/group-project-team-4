@@ -53,6 +53,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     }
     return board;
   } */
+  /*
   private _isHit(move: GameMove<BattleShipMove>): boolean {
     // to check if a ship is hit
     const { board } = this.state;
@@ -62,7 +63,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       }
     }
     return false;
-  }
+  }*/
 
   private _updateTurn() {
     // the turn will be set to X by default in the beggineng of the game
@@ -146,19 +147,19 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       }
   }
 
-  private _validatePlacementMove(move: GameMove<BattleShipMove>) {
+  /*private _validatePlacementMove(move: GameMove<BattleShipMove>) {
     // Implement validation logic for a move in Battleship
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
-  }
+  }*/
 
   public applyMove(move: GameMove<BattleShipMove>): void {
     /* * placement move
      */ if (this.state.status !== 'IN_PROGRESS') {
       throw GAME_NOT_IN_PROGRESS_MESSAGE;
     } else if (move.move.shiptype !== undefined) {
-      this._validatePlacementMove(move);
+      //this._validatePlacementMove(move);
       let _impliedMove;
       let _maxIndex;
       if (move.move.player === 'X') {
@@ -234,9 +235,9 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       /* * guess move
        */
       this._validateGuessMove(move);
-      if (!this._isHit(move)) {
+      //if (!this._isHit(move)) {
         /** update turn */
-      }
+      //}
       this.state.moves = this.state.moves.concat(move.move);
       this._checkForGameEnding();
     }
