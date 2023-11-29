@@ -127,7 +127,8 @@ export interface BattleShipGameState extends WinnableGameState {
   o?: PlayerID;
   x_board: ReadOnlyArray<BattleShipMove>;
   o_board: ReadOnlyArray<BattleShipMove>;
-  ships: ReadonlyArray<BattleShip>;
+  x_ships: ReadonlyArray<BattleShip>;
+  o_ships: ReadonlyArray<BattleShip>;
 }
 
 export type InteractableID = string;
