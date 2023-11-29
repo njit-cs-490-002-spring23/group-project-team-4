@@ -154,7 +154,7 @@ export default class BattleshipGame extends Game<BattleShipGameState, BattleShip
   public applyMove(move: GameMove<BattleShipMove>): void {
     /* * placement move
     */if(this.state.status !== 'IN_PROGRESS'){
-
+      throw GAME_NOT_IN_PROGRESS_MESSAGE;
     }
     else{
       if(move.move.shiptype !== undefined){
