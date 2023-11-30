@@ -7,8 +7,6 @@ import {
 } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import GameAreaController, { GameEventTypes } from './GameAreaController';
-// import { GameArea<BattleShipGameState> as GameAreaModel } from '../../types/CoveyTownSocket';
-
 
 export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
 
@@ -264,29 +262,5 @@ export default class BattleShipAreaController extends GameAreaController<
       });
     }
     return;
-  }
-
-  // TO-DO:
-  // Functions that are in ConversationAreaController but not in GameAreaController
-
-  toInteractableAreaModel(): GameAreaModel {
-    return {
-      // id: this.id,
-      // occupants: this.occupants.map(player => player.id),
-      // type: 'GameArea',
-      // game: this._model.game,
-      game: this._model.game,
-      history: this._model.history,
-    };
-  }
-
-  static fromGameAreaModel(
-    gameAreaModel: GameArea<BattleShipGameState>,
-    playerFinder: (playerIDs: string[]) => PlayerController[],
-  ): BattleShipAreaController {
-    const ret = new BattleShipAreaController(); // TO-DO: add parameters
-    ret.occupants = playerFinder(gameAreaModel.occupants);
-    ret._updateFrom(gameAreaModel);
-    return ret;
   }
 }

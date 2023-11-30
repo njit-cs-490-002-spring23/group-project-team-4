@@ -1,7 +1,7 @@
 import {
   ConversationArea,
   Interactable,
-  BattleShipGameState,
+  TicTacToeGameState,
   ViewingArea,
   GameArea,
 } from './CoveyTownSocket';
@@ -20,8 +20,8 @@ export function isViewingArea(interactable: Interactable): interactable is Viewi
   return interactable.type === 'ViewingArea';
 }
 
-export function isBattleShipArea(
+export function isTicTacToeArea(
   interactable: Interactable,
-): interactable is GameArea<BattleShipGameState> {
-  return interactable.type === 'BattleShipArea';
+): interactable is GameArea<TicTacToeGameState> {
+  return interactable.type === 'TicTacToeArea';
 }

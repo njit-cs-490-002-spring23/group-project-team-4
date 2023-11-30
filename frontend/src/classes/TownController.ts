@@ -26,7 +26,7 @@ import {
   TownSettingsUpdate,
   ViewingArea as ViewingAreaModel,
 } from '../types/CoveyTownSocket';
-import { isConversationArea, isBattleShipArea, isViewingArea } from '../types/TypeUtils';
+import { isConversationArea, isTicTacToeArea, isViewingArea } from '../types/TypeUtils';
 import ConversationAreaController from './interactable/ConversationAreaController';
 import GameAreaController, { GameEventTypes } from './interactable/GameAreaController';
 import InteractableAreaController, {
@@ -35,7 +35,6 @@ import InteractableAreaController, {
 import TicTacToeAreaController from './interactable/BattleShipAreaController';
 import ViewingAreaController from './interactable/ViewingAreaController';
 import PlayerController from './PlayerController';
-import BattleShipAreaController from './interactable/BattleShipAreaController';
 
 const CALCULATE_NEARBY_PLAYERS_DELAY_MS = 300;
 const SOCKET_COMMAND_TIMEOUT_MS = 5000;
@@ -550,17 +549,6 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     await this._townsService.createConversationArea(this.townID, this.sessionToken, newArea);
   }
 
-/**
- * Create a new game area, sending the request to the townService. Throws an error if the request
-  * is not successful. Does not immediately update local state about the new game area - it will be
-  * updated once the townService creates the area and emits an interactableUpdate
-  *
-  * @param newArea
-  */
-  async createGameArea(newArea: { id: string; occupants: Array<string> }) {
-    await this._townsService.createGameArea(this.townID, this.sessionToken, newArea);
-  }
-
   /**
    * Create a new viewing area, sending the request to the townService. Throws an error if the request
    * is not successful. Does not immediately update local state about the new viewing area - it will be
@@ -613,12 +601,10 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
             );
           } else if (isViewingArea(eachInteractable)) {
             this._interactableControllers.push(new ViewingAreaController(eachInteractable));
-            console.log('ViewingAreaController');
-          } else if (isBattleShipArea(eachInteractable)) {
+          } else if (isTicTacToeArea(eachInteractable)) {
             this._interactableControllers.push(
-              new BattleShipAreaController(eachInteractable.id, eachInteractable, this),
+              new TicTacToeAreaController(eachInteractable.id, eachInteractable, this),
             );
-            console.log('BattleShipAreaController');
           }
         });
         this._userID = initialData.userID;

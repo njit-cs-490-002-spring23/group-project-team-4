@@ -1,9 +1,9 @@
 import { Button, chakra, Container } from '@chakra-ui/react';
 import React from 'react';
-import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
+import TicTacToeAreaController from '../../../../classes/interactable/BattleShipAreaController';
 
 export type TicTacToeGameProps = {
-  gameAreaController: BattleShipAreaController;
+  gameAreaController: TicTacToeAreaController;
 };
 
 /**
@@ -53,34 +53,21 @@ const StyledTicTacToeBoard = chakra(Container, {
  *
  * @param gameAreaController the controller for the TicTacToe game
  */
-// export default function TicTacToeBoard({ gameAreaController }: TicTacToeGameProps): JSX.Element {
-//   //TODO - implement this component (delete what's here first)
-//   return (
-//     <StyledTicTacToeBoard aria-label='Tic-Tac-Toe Board'>
-//       <StyledTicTacToeSquare aria-label='Cell 0,0'>
-//         {gameAreaController.board[0][0]}
-//       </StyledTicTacToeSquare>
-//       <StyledTicTacToeSquare aria-label='Cell 0,1'></StyledTicTacToeSquare>
-//       <StyledTicTacToeSquare aria-label='Cell 0,2'></StyledTicTacToeSquare>
-//       <StyledTicTacToeSquare aria-label='Cell 1,0'></StyledTicTacToeSquare>
-//       <StyledTicTacToeSquare aria-label='Cell 1,1'></StyledTicTacToeSquare>
-//       <StyledTicTacToeSquare aria-label='Cell 1,2'></StyledTicTacToeSquare>
-//       <StyledTicTacToeSquare aria-label='Cell 2,0'></StyledTicTacToeSquare>
-//       <StyledTicTacToeSquare aria-label='Cell 2,1'></StyledTicTacToeSquare>
-//       <StyledTicTacToeSquare aria-label='Cell 2,2'></StyledTicTacToeSquare>
-//     </StyledTicTacToeBoard>
-//   );
-// }
 export default function TicTacToeBoard({ gameAreaController }: TicTacToeGameProps): JSX.Element {
+  //TODO - implement this component (delete what's here first)
   return (
     <StyledTicTacToeBoard aria-label='Tic-Tac-Toe Board'>
-      {gameAreaController.board.map((row, rowIndex) =>
-        row.map((cell, colIndex) => (
-          <StyledTicTacToeSquare key={`${rowIndex}-${colIndex}`} aria-label={`Cell ${rowIndex},${colIndex}`}>
-            {cell}
-          </StyledTicTacToeSquare>
-        ))
-      )}
+      <StyledTicTacToeSquare aria-label='Cell 0,0'>
+        {gameAreaController.board[0][0]}
+      </StyledTicTacToeSquare>
+      <StyledTicTacToeSquare aria-label='Cell 0,1'></StyledTicTacToeSquare>
+      <StyledTicTacToeSquare aria-label='Cell 0,2'></StyledTicTacToeSquare>
+      <StyledTicTacToeSquare aria-label='Cell 1,0'></StyledTicTacToeSquare>
+      <StyledTicTacToeSquare aria-label='Cell 1,1'></StyledTicTacToeSquare>
+      <StyledTicTacToeSquare aria-label='Cell 1,2'></StyledTicTacToeSquare>
+      <StyledTicTacToeSquare aria-label='Cell 2,0'></StyledTicTacToeSquare>
+      <StyledTicTacToeSquare aria-label='Cell 2,1'></StyledTicTacToeSquare>
+      <StyledTicTacToeSquare aria-label='Cell 2,2'></StyledTicTacToeSquare>
     </StyledTicTacToeBoard>
   );
 }

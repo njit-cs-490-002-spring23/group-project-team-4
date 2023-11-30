@@ -14,7 +14,6 @@ import { InteractableID } from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
 import TicTacToeBoard from './TicTacToeBoard';
 import Leaderboard from '../Leaderboard';
-import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
 
 /**
  * The TicTacToeArea component renders the TicTacToe game area.
@@ -49,13 +48,13 @@ import BattleShipAreaController from '../../../../classes/interactable/BattleShi
  *
  */
 function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
-  const gameAreaController = useInteractableAreaController<BattleShipAreaController>(interactableID);
+  const gameAreaController = useInteractableAreaController<TicTacToeAreaController>(interactableID);
   let joinButton;
   const winToast = useToast();
   const townController = useTownController();
   const [gameState, setGameState] = useState(gameAreaController);
   const [winDescription, setWinDescription] = useState(' ');
-  const ref = useRef<BattleShipAreaController>(gameAreaController);
+  const ref = useRef<TicTacToeAreaController>(gameAreaController);
   const [statusMsg, setStatusMsg] = useState('');
   const [playerO, setPlayerO] = useState('  ');
   const [playerX, setPlayerX] = useState('   ');
@@ -170,7 +169,7 @@ export default function TicTacToeAreaWrapper(): JSX.Element {
     }
   }, [townController, gameArea]);
 
-  if (gameArea && gameArea.getData('type') === 'BattleShip') {
+  if (gameArea && gameArea.getData('type') === 'TicTacToe') {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
         <ModalOverlay />
@@ -182,10 +181,5 @@ export default function TicTacToeAreaWrapper(): JSX.Element {
       </Modal>
     );
   }
-  // return an empty fragment if the player is not in a tic tac toe area
-  return (
-    <>
-      <div />
-    </>
-  )
+  return <></>;
 }
