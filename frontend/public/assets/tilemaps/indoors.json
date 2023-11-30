@@ -545,12 +545,12 @@
                 {
                  "height":92.2796984663374,
                  "id":39,
-                 "name":"Tic Tac Toe 2",
+                 "name":"BattleShip 2",
                  "properties":[
                         {
                          "name":"type",
                          "type":"string",
-                         "value":"TicTacToe"
+                         "value":"BattleShip"
                         }],
                  "rotation":0,
                  "type":"GameArea",
@@ -562,12 +562,12 @@
                 {
                  "height":83.8442547785938,
                  "id":43,
-                 "name":"Tic Tac Toe 1",
+                 "name":"BattleShip 1",
                  "properties":[
                         {
                          "name":"type",
                          "type":"string",
-                         "value":"TicTacToe"
+                         "value":"BattleShip"
                         }],
                  "rotation":0,
                  "type":"GameArea",

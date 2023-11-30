@@ -73,6 +73,11 @@ export interface ViewingArea extends Interactable {
   elapsedTimeSec: number;
 }
 
+export interface GameArea<T extends GameState> extends Interactable {
+  game: GameInstance<T> | undefined;
+  history: GameResult[];
+}
+
 export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER';
 /**
  * Base type for the state of a game
