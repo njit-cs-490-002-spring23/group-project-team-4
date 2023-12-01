@@ -47,6 +47,7 @@ import Leaderboard from '../Leaderboard';
  *    - Our player lost: description 'You lost :('
  *
  */
+
 function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<TicTacToeAreaController>(interactableID);
   let joinButton;
@@ -89,6 +90,8 @@ function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): 
   const observersList = gameAreaController.observers.map(Observer => (
     <li key={Observer.id}> {Observer.userName} </li>
   ));
+  
+
   /** Join Game Button */
   if (gameAreaController.status === 'WAITING_TO_START' || gameAreaController.status === 'OVER') {
     joinButton = <button onClick={() => gameAreaController.joinGame()}>JoinGame</button>;
