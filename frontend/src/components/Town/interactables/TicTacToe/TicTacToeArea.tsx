@@ -14,8 +14,6 @@ import { InteractableID } from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
 import TicTacToeBoard from './TicTacToeBoard';
 import Leaderboard from '../Leaderboard';
-import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
-import BattleShipBoard from './TicTacToeBoard';
 
 /**
  * The TicTacToeArea component renders the TicTacToe game area.
@@ -49,105 +47,135 @@ import BattleShipBoard from './TicTacToeBoard';
  *    - Our player lost: description 'You lost :('
  *
  */
+
 function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
-  const gameAreaController =
-    useInteractableAreaController<BattleShipAreaController>(interactableID);
+  const gameAreaController = useInteractableAreaController<TicTacToeAreaController>(interactableID);
   let joinButton;
   const winToast = useToast();
   const townController = useTownController();
   const [gameState, setGameState] = useState(gameAreaController);
   const [winDescription, setWinDescription] = useState(' ');
-  const ref = useRef<BattleShipAreaController>(gameAreaController);
+  const ref = useRef<TicTacToeAreaController>(gameAreaController);
   const [statusMsg, setStatusMsg] = useState('');
   const [playerO, setPlayerO] = useState('  ');
   const [playerX, setPlayerX] = useState('   ');
+ 
+  /** Winner */
   useEffect(() => {
+    if (gameState.status === 'OVER' && !gameState.winner) {
+      setWinDescription('Game ended in a tie');
+    } else if (gameState.status === 'OVER' && gameState.winner === townController.ourPlayer) {
+      setWinDescription('You won!');
+    } else if (gameState.status === 'OVER') {
+      setWinDescription('You lost :(');
+    }
+    winToast({
+      description: winDescription,
+    });
+  }, [winDescription, gameState, townController.ourPlayer, winToast]);
+  /** Observers List*/
+  const observersList = gameAreaController.observers.map(Observer => (
+    <li key={Observer.id}> {Observer.userName} </li>
+  ));
+  // State variable to trigger component refresh
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
+  // Modified function to handle the join game process
+  const handleJoinGame = async () => {
+    try {
+      await gameAreaController.joinGame();
+      setRefreshFlag(prev => !prev); // Toggle the flag to refresh the component
+    } catch (error) {
+      winToast({
+        description: "Error on joining",
+        status: 'error',
+      });
+    }
+  };
+  useEffect(() => {
+    // Fetch or update game state based on the refreshFlag
+    // This effect will run when the component mounts and whenever refreshFlag changes
+    // Add necessary logic to update the game state or other relevant data
+
     const stateListener = () => {
       const currentRef = ref.current;
       if (currentRef !== undefined && currentRef.moveCount > gameState.moveCount) {
         setGameState(currentRef);
       }
     };
+
     gameAreaController.addListener('gameUpdated', stateListener);
     gameAreaController.addListener('gameEnd', stateListener);
+
     return () => {
       gameAreaController.removeListener('gameEnd', stateListener);
       gameAreaController.removeListener('gameUpdated', stateListener);
     };
-  }, [gameAreaController, gameState]);
- 
-  /** Observers List*/
-  const observersList = gameAreaController.observers.map(Observer => (
-    <li key={Observer.id}> {Observer.userName} </li>
-  ));
+  }, [gameAreaController, gameState, refreshFlag]); // Include refreshFlag as a dependency
+  
+
   /** Join Game Button */
-  if (gameAreaController.status === 'WAITING_TO_START' || gameAreaController.status === 'OVER') {
-    joinButton = <button onClick={() => gameAreaController.joinGame()}>JoinGame</button>;
+  if (
+    gameAreaController.status === 'WAITING_TO_START' ||
+    gameAreaController.status === 'OVER' ||
+    gameAreaController.players.length < 2
+  ) {
+    joinButton = <button onClick={handleJoinGame}>Join Game</button>;
   }
   /** Player List */
-  function PlayerList(controller: BattleShipAreaController){
-    useEffect(() => {
-      const determinePlayers = (c: BattleShipAreaController) => {
-        if (c.x && c.o) {
-          setPlayerX(c.x.userName);
-          setPlayerO(c.o.userName);
-        } else if (c.x && !c.o) {
-          setPlayerX(c.x.userName);
-          setPlayerO('(No player yet!)');
-        } else if (!c.x && c.o) {
-          setPlayerX('(No player yet!)');
-          setPlayerO(c.o.userName);
-        } else {
-          setPlayerX('(No player yet!)');
-          setPlayerO('(No player yet!)');
-        }
-      };
-      determinePlayers(controller);
-    }, [controller]);
-    return (
-      <>
-        <h1>{controller.x?.userName}</h1>
-        <h1>{controller.o?.userName}</h1>
-      </>
-    );
-  }
-
-  function renderBoard(controller: BattleShipAreaController){
-    if (controller.status === 'IN_PROGRESS') {
-      return <TicTacToeBoard gameAreaController={controller}/>;
-    } else {
-      return <></>;
-    }
-  }
-
-  const oModal = false;
-  const openModal = useRef<boolean>(oModal);
   useEffect(() => {
-    if (gameAreaController.status === 'IN_PROGRESS') {
-      openModal.current = true;
-    } else {
-      openModal.current = false;
-    }
-  }, [gameAreaController]);
-
-  const closeModal = useCallback(() => {
-    if (gameAreaController) {
-      gameAreaController.leaveGame();
-    }
-  }, [gameAreaController]);
+    const determinePlayers = (controller: TicTacToeAreaController) => {
+      if (controller.x && controller.o) {
+        setPlayerX(controller.x.userName);
+        setPlayerO(controller.o.userName);
+      } else if (controller.x && !controller.o) {
+        setPlayerX(controller.x.userName);
+        setPlayerO('(No player yet!)');
+      } else if (!controller.x && controller.o) {
+        setPlayerX('(No player yet!)');
+        setPlayerO(controller.o.userName);
+      } else {
+        setPlayerX('(No player yet!)');
+        setPlayerO('(No player yet!)');
+      }
+    };
+    determinePlayers(gameState);
+  }, [gameAreaController, gameState, playerO, playerX, refreshFlag]);
+  /** Game status */
+  useEffect(() => {
+    const determineStatusMsg = (controller: TicTacToeAreaController) => {
+      if (controller.status === 'WAITING_TO_START') {
+        setStatusMsg('Game not yet started.');
+      } else if (
+        controller.status === 'IN_PROGRESS' &&
+        townController.ourPlayer !== controller.whoseTurn
+      ) {
+        setStatusMsg(
+          `Game in progress, ${controller.moveCount} moves in, currently ${controller.whoseTurn?.userName}'s turn`,
+        );
+      } else if (
+        controller.status === 'IN_PROGRESS' &&
+        townController.ourPlayer === controller.whoseTurn
+      ) {
+        setStatusMsg(`Game in progress, ${controller.moveCount} moves in, currently your turn`);
+      } else if (controller.status === 'OVER') {
+        setStatusMsg('Game over.');
+      }
+    };
+    determineStatusMsg(gameState);
+  }, [gameAreaController, townController.ourPlayer, statusMsg, gameState, refreshFlag]);
+  // TODO - implement this component
   return (
     <>
-      <>
-        <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
-        <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>{PlayerList(gameAreaController)}</ModalHeader>
-            <ModalCloseButton />
-            <div>{joinButton}</div>
-            <div>{renderBoard(gameAreaController)}</div>
-          </ModalContent>
-        </Modal>
-      </>
+      <Leaderboard results={gameState.history} />
+      <TicTacToeBoard gameAreaController={gameState} />
+      <h1>{statusMsg}</h1>
+      {joinButton}
+      <ul aria-label='list of observers in the game'>{observersList}</ul>
+      <ul aria-label='list of players in the game'>
+        <li key={'x'}> {'X: ' + playerX}</li>
+        <li key={'o'}> {'O: ' + playerO}</li>
+      </ul>
     </>
   );
 }
