@@ -75,19 +75,7 @@ function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): 
       gameAreaController.removeListener('gameUpdated', stateListener);
     };
   }, [gameAreaController, gameState]);
-  /** Winner */
-  /*useEffect(() => {
-    if (gameState.status === 'OVER' && !gameState.winner) {
-      setWinDescription('Game ended in a tie');
-    } else if (gameState.status === 'OVER' && gameState.winner === townController.ourPlayer) {
-      setWinDescription('You won!');
-    } else if (gameState.status === 'OVER') {
-      setWinDescription('You lost :(');
-    }
-    winToast({
-      description: winDescription,
-    });
-  }, [winDescription, gameState, townController.ourPlayer, winToast]);
+ 
   /** Observers List*/
   const observersList = gameAreaController.observers.map(Observer => (
     <li key={Observer.id}> {Observer.userName} </li>
@@ -132,29 +120,6 @@ function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): 
     }
   }
 
-  /** Game status */
-  /*useEffect(() => {
-    const determineStatusMsg = (controller: TicTacToeAreaController) => {
-      if (controller.status === 'WAITING_TO_START') {
-        setStatusMsg('Game not yet started.');
-      } else if (
-        controller.status === 'IN_PROGRESS' &&
-        townController.ourPlayer !== controller.whoseTurn
-      ) {
-        setStatusMsg(
-          `Game in progress, ${controller.moveCount} moves in, currently ${controller.whoseTurn?.userName}'s turn`,
-        );
-      } else if (
-        controller.status === 'IN_PROGRESS' &&
-        townController.ourPlayer === controller.whoseTurn
-      ) {
-        setStatusMsg(`Game in progress, ${controller.moveCount} moves in, currently your turn`);
-      } else if (controller.status === 'OVER') {
-        setStatusMsg('Game over.');
-      }
-    };
-    determineStatusMsg(gameState);
-  }, [gameAreaController, townController.ourPlayer, statusMsg, gameState]);*/
   const oModal = false;
   const openModal = useRef<boolean>(oModal);
   useEffect(() => {
