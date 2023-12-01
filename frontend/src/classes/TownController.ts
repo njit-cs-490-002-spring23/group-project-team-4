@@ -26,13 +26,13 @@ import {
   TownSettingsUpdate,
   ViewingArea as ViewingAreaModel,
 } from '../types/CoveyTownSocket';
-import { isConversationArea, isTicTacToeArea, isViewingArea } from '../types/TypeUtils';
+import { isConversationArea, isBattleShipArea, isViewingArea } from '../types/TypeUtils';
 import ConversationAreaController from './interactable/ConversationAreaController';
 import GameAreaController, { GameEventTypes } from './interactable/GameAreaController';
 import InteractableAreaController, {
   BaseInteractableEventMap,
 } from './interactable/InteractableAreaController';
-import TicTacToeAreaController from './interactable/BattleShipAreaController';
+import BattleShipAreaController from './interactable/BattleShipAreaController';
 import ViewingAreaController from './interactable/ViewingAreaController';
 import PlayerController from './PlayerController';
 
@@ -601,9 +601,9 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
             );
           } else if (isViewingArea(eachInteractable)) {
             this._interactableControllers.push(new ViewingAreaController(eachInteractable));
-          } else if (isTicTacToeArea(eachInteractable)) {
+          } else if (isBattleShipArea(eachInteractable)) {
             this._interactableControllers.push(
-              new TicTacToeAreaController(eachInteractable.id, eachInteractable, this),
+              new BattleShipAreaController(eachInteractable.id, eachInteractable, this),
             );
           }
         });

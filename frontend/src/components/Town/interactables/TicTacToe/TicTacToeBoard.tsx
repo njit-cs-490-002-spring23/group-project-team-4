@@ -1,9 +1,10 @@
 import { Button, chakra, Container } from '@chakra-ui/react';
 import React from 'react';
 import TicTacToeAreaController from '../../../../classes/interactable/BattleShipAreaController';
+import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
 
-export type TicTacToeGameProps = {
-  gameAreaController: TicTacToeAreaController;
+export type BattleShipGameProps = {
+  gameAreaController: BattleShipAreaController;
 };
 
 /**
@@ -53,7 +54,7 @@ const StyledTicTacToeBoard = chakra(Container, {
  *
  * @param gameAreaController the controller for the TicTacToe game
  */
-export default function TicTacToeBoard({ gameAreaController }: TicTacToeGameProps): JSX.Element {
+export default function BattleShipBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
   //TODO - implement this component (delete what's here first)
   return (
     <StyledTicTacToeBoard aria-label='Tic-Tac-Toe Board'>
