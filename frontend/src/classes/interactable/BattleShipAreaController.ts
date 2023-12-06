@@ -278,42 +278,69 @@ export default class BattleShipAreaController extends GameAreaController<
   // Horizontal implementation
   protected placeShip(newModel: GameArea<BattleShipGameState>) {
     const ourBoard = this.board;
+    let row;
+    let col;
     if (this.isOurTurn) {
       switch (newModel.game?.state.x_board[newModel.game?.state.x_board.length - 1].shiptype) {
         case 'battleship':
+          if (newModel.game.state.turn === 'X') {
+            row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 4].row;
+            col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 4].col;
+          } else {
+            row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 4].row;
+            col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 4].col;
+          }
           for (let i = 0; i < 5; i += 1) {
-            const row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 4].row;
-            const col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 4].col;
             ourBoard[row][col + i] = 1;
           }
           break;
         case 'carrier':
+          if (newModel.game.state.turn === 'X') {
+            row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 5].row;
+            col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 5].col;
+          } else {
+            row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 5].row;
+            col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 5].col;
+          }
           for (let i = 0; i < 4; i += 1) {
-            const row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 5].row;
-            const col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 5].col;
             ourBoard[row][col + i] = 1;
           }
           break;
         case 'criuser':
+          if (newModel.game.state.turn === 'X') {
+            row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].row;
+            col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].col;
+          } else {
+            row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].row;
+            col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].col;
+          }
           for (let i = 0; i < 3; i += 1) {
-            const row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].row;
-            const col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].col;
             ourBoard[row][col + i] = 1;
           }
           break;
 
         case 'submarine':
+          if (newModel.game.state.turn === 'X') {
+            row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].row;
+            col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].col;
+          } else {
+            row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].row;
+            col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].col;
+          }
           for (let i = 0; i < 3; i += 1) {
-            const row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].row;
-            const col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].col;
             ourBoard[row][col + i] = 1;
           }
           break;
 
         case 'destroyer':
+          if (newModel.game.state.turn === 'X') {
+            row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 2].row;
+            col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 2].col;
+          } else {
+            row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 2].row;
+            col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 2].col;
+          }
           for (let i = 0; i < 2; i += 1) {
-            const row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 2].row;
-            const col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 2].col;
             ourBoard[row][col + i] = 1;
           }
           break;
