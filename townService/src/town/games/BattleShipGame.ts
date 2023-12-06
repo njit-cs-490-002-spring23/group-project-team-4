@@ -140,7 +140,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
     }
     for (const m of this.state.moves) {
-      if (move.move.row === m.row && move.move.col === m.col && m.player !== move.move.player) {
+      if (move.move.row === m.row && move.move.col === m.col && m.player === move.move.player) {
         throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
       }
     }
