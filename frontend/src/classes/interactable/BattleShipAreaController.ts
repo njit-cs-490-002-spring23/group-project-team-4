@@ -344,7 +344,7 @@ export default class BattleShipAreaController extends GameAreaController<
       this._townController.sendInteractableCommand(this.id, {
         gameID: this._instanceID,
         type: 'GameMove',
-        move: { row: row, col: col, shiptype: undefined, player: gamePiece }, // ship type undefined for hit moves
+        move: { row: row, col: col, shiptype: ship, player: gamePiece }, // ship type undefined for hit moves
       });
     }
     return;
