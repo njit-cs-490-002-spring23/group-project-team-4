@@ -54,7 +54,7 @@ export default class BattleShipAreaController extends GameAreaController<
   /**
    * Returns the current state of the board.
    *
-   * The board is a 10x10 array of BattleShipCell, which is either '1', '2', or '0', 
+   * The board is a 10x10 array of BattleShipCell, which is either '1', '2', or '0',
    * describing 'hit', 'miss', and 'unattacked' respectively.
    *
    * The 2-dimensional array is indexed by row and then column, so board[0][0] is the top-left cell,
@@ -232,7 +232,13 @@ export default class BattleShipAreaController extends GameAreaController<
   protected _updateFrom(newModel: GameArea<BattleShipGameState>): void {
     const newMoveCount = newModel.game?.state.moves.length;
     // TODO: if moveCount is zero, game has just started, so update the board with ship placements
-
+    const newPlaceCountX = newModel.game?.state.x_board.length;
+    const newPlaceCountO = newModel.game?.state.o_board.length;
+    if (newPlaceCountO && newPlaceCountO > this._model.game?.state.o_board.length) {
+      this.placeShip(newModel);
+    } else if (newPlaceCountX && newPlaceCountX > this._model.game?.state.x_board.length) {
+      this.placeShip(newModel);
+    }
     if (newMoveCount && newMoveCount > this.moveCount) {
       const newBoard = this.board;
       for (let newMove = 0; newMove < newMoveCount; newMove += 1) {
@@ -246,11 +252,14 @@ export default class BattleShipAreaController extends GameAreaController<
           // if the value at row and col is 0, then change it to 3 to indicate that it is a miss
           if (newBoard[row][col] === 0) {
             newBoard[row][col] = 3;
-          } else if (newBoard[row][col] === 1) { // if the value at row and col is 1, then change it to 2 to indicate that it is a hit
+          } else if (newBoard[row][col] === 1) {
+            // if the value at row and col is 1, then change it to 2 to indicate that it is a hit
             newBoard[row][col] = 2;
-          } else if (newBoard[row][col] === 2) { // if the value at row and col is 2, then indicate that it has already been hit
+          } else if (newBoard[row][col] === 2) {
+            // if the value at row and col is 2, then indicate that it has already been hit
             // TODO
-          } else if (newBoard[row][col] === 3) { // if the value at row and col is 3, then indicate that it has already been missed
+          } else if (newBoard[row][col] === 3) {
+            // if the value at row and col is 3, then indicate that it has already been missed
             // TODO
           }
         }
@@ -267,43 +276,50 @@ export default class BattleShipAreaController extends GameAreaController<
   }
 
   // Horizontal implementation
-  protected placeShip(ship: BattleShip, row: BattleShipGridPosition, col: BattleShipGridPosition) {
+  protected placeShip(newModel: GameArea<BattleShipGameState>) {
     const ourBoard = this.board;
     if (this.isOurTurn) {
-      switch (ship) {
+      switch (newModel.game?.state.x_board[newModel.game?.state.x_board.length - 1].shiptype) {
         case 'battleship':
           for (let i = 0; i < 5; i += 1) {
+            const row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 4].row;
+            const col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 4].col;
             ourBoard[row][col + i] = 1;
           }
           break;
-
         case 'carrier':
-          for (let i = 0; i <4; i += 1) {
+          for (let i = 0; i < 4; i += 1) {
+            const row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 5].row;
+            const col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 5].col;
             ourBoard[row][col + i] = 1;
           }
           break;
-
         case 'criuser':
           for (let i = 0; i < 3; i += 1) {
+            const row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].row;
+            const col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].col;
             ourBoard[row][col + i] = 1;
           }
           break;
 
         case 'submarine':
           for (let i = 0; i < 3; i += 1) {
+            const row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].row;
+            const col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].col;
             ourBoard[row][col + i] = 1;
           }
           break;
 
         case 'destroyer':
           for (let i = 0; i < 2; i += 1) {
+            const row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 2].row;
+            const col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 2].col;
             ourBoard[row][col + i] = 1;
           }
           break;
+      }
     }
   }
-}
-
 
   /**
    * Sends a request to the server to make a move in the game.
@@ -316,7 +332,11 @@ export default class BattleShipAreaController extends GameAreaController<
    * @param row Row of the move
    * @param col Column of the move
    */
-  public async makeMove(row: BattleShipGridPosition, col: BattleShipGridPosition, ship: BattleShip) {
+  public async makeMove(
+    row: BattleShipGridPosition,
+    col: BattleShipGridPosition,
+    ship: BattleShip,
+  ) {
     if (this.status !== 'IN_PROGRESS' || this._instanceID === undefined) {
       throw new Error(NO_GAME_IN_PROGRESS_ERROR);
     } else {
