@@ -66,7 +66,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
   }*/
 
   private _updateTurn() {
-    // the turn will be set to X by default in the beggineng of the game
+    // the turn will be set to X by default in the beginnng of the game
     if (this.state.turn === 'X') {
       this.state.turn = 'O';
     } else if (this.state.turn === 'O') {
