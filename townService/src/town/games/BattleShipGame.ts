@@ -28,7 +28,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       x_ships: ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'],
       o_ships: ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'],
       status: 'WAITING_TO_START',
-      turn: undefined,
+      turn: 'X',
     });
   }
 
