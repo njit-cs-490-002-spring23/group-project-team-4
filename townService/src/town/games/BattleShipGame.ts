@@ -14,6 +14,7 @@ import {
   BattleShipGridPosition,
 } from '../../types/CoveyTownSocket';
 import Game from './Game';
+import { GameState } from '../../types/CoveyTownSocket';
 
 /**
  * A BattleshipGame is a Game that implements the rules of Battleship.
