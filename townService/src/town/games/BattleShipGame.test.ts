@@ -1,15 +1,16 @@
 import { createPlayerForTesting } from '../../TestUtils';
 import Player from '../../lib/Player';
-import { TicTacToeMove } from '../../types/CoveyTownSocket';
-import TicTacToeGame from './BattleShipGame';
-
-describe('TicTacToeGame', () => {
-  let game: TicTacToeGame;
+import { BattleShipMove } from '../../types/CoveyTownSocket';
+import BattleShipGame from './BattleShipGame';
+import { GameState } from '../../types/CoveyTownSocket';
+import InvalidParametersError from '../../lib/InvalidParametersError';
+describe('BattleShipGame', () => {
+  let game: BattleShipGame;
 
   beforeEach(() => {
-    game = new TicTacToeGame();
+    game = new BattleShipGame();
   });
-
+  
   describe('[T1.1] _join', () => {
     describe('When the player can be added', () => {
       it('makes the first player X and initializes the state with status WAITING_TO_START', () => {
@@ -18,6 +19,10 @@ describe('TicTacToeGame', () => {
         expect(game.state.x).toEqual(player.id);
         expect(game.state.o).toBeUndefined();
         expect(game.state.moves).toHaveLength(0);
+        expect(game.state.x_board).toEqual([]);
+        expect(game.state.o_board).toEqual([]);
+        expect(game.state.x_ships).toEqual(['battleship', 'carrier', 'criuser', 'destroyer', 'submarine']);
+        expect(game.state.o_ships).toEqual(['battleship', 'carrier', 'criuser', 'destroyer', 'submarine']);
         expect(game.state.status).toEqual('WAITING_TO_START');
         expect(game.state.winner).toBeUndefined();
       });
@@ -29,7 +34,9 @@ describe('TicTacToeGame', () => {
             const player1 = createPlayerForTesting();
             const player2 = createPlayerForTesting();
             game.join(player1);
+          
             game.join(player2);
+            expect(game.state.status).toEqual('IN_PROGRESS');
             expect(game.state.x).toEqual(player1.id);
             expect(game.state.o).toEqual(player2.id);
 
@@ -45,6 +52,7 @@ describe('TicTacToeGame', () => {
         });
       });
     });
+
     describe('applyMove', () => {
       describe('when given a valid move', () => {
         let player1: Player;
@@ -55,15 +63,16 @@ describe('TicTacToeGame', () => {
           game.join(player1);
           game.join(player2);
         });
-        it('[T2.1] should add the move to the game state', () => {
-          const move: TicTacToeMove = { row: 1, col: 2, gamePiece: 'X' };
+        it('[T2.1] should correctly handle a ship placement move', () => {
+          const plmove: BattleShipMove = { row: 2, col: 3, shiptype: 'submarine', player: 'X' };
           game.applyMove({
             gameID: game.id,
             playerID: player1.id,
-            move,
+            move: plmove
           });
           expect(game.state.moves).toHaveLength(1);
-          expect(game.state.moves[0]).toEqual(move);
+          expect(game.state.x_board[0]).toEqual(plmove);
+          expect(game.state.o_board).toEqual([]);
           expect(game.state.status).toEqual('IN_PROGRESS');
         });
       });
@@ -82,7 +91,7 @@ describe('TicTacToeGame', () => {
       const player3 = createPlayerForTesting();
       game.join(player1);
       game.join(player2);
-      expect(() => game.join(player3)).toThrow();
+      expect(() => game.join(player3)).toThrow('Game is full');
     });
 
     it('should automatically set the first player to X and the second player to O and update the game status', () => {
@@ -139,7 +148,23 @@ describe('TicTacToeGame', () => {
     });
   });
 
-  describe('[T2.2] applyMove', () => {
+  function placeShipsForPlayer(player, playerID) {
+    const shipTypes = ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'];
+    shipTypes.forEach((shiptype, index) => {
+      const move = {
+        row: index, 
+        col: 0,     
+        shiptype: shiptype,
+        player: player,
+      };
+      game.applyMove({
+        gameID: game.id,
+        playerID: playerID,
+        move,
+      });
+    });
+  }
+  describe('[T2.2] applyMove(guess move)', () => {
     let player1: Player;
     let player2: Player;
     beforeEach(() => {
@@ -147,15 +172,19 @@ describe('TicTacToeGame', () => {
       player2 = createPlayerForTesting();
       game.join(player1);
       game.join(player2);
+      placeShipsForPlayer(player1, player1.id);
+      placeShipsForPlayer(player2, player2.id);
+      
     });
+
     it('throws an error when player X goes twice in a row', () => {
-      const move1: TicTacToeMove = { row: 1, col: 1, gamePiece: 'X' };
+      const move1: BattleShipMove = { row: 1, col: 1, shiptype: undefined, player: 'X' };
       game.applyMove({
         gameID: game.id,
         playerID: player1.id,
         move: move1,
       });
-      const move: TicTacToeMove = { row: 1, col: 2, gamePiece: 'X' };
+      const move: BattleShipMove = { row: 1, col: 2, shiptype: undefined, player: 'X' };
       expect(() =>
         game.applyMove({
           gameID: game.id,
@@ -164,14 +193,15 @@ describe('TicTacToeGame', () => {
         }),
       ).toThrow();
     });
+
     it('throws an error when player O goes twice in a row', () => {
-      const move1: TicTacToeMove = { row: 1, col: 1, gamePiece: 'O' };
+      const move1: BattleShipMove = { row: 1, col: 1, shiptype: undefined, player: 'O' };
       game.applyMove({
         gameID: game.id,
         playerID: player2.id,
         move: move1,
       });
-      const move: TicTacToeMove = { row: 1, col: 2, gamePiece: 'O' };
+      const move: BattleShipMove = { row: 1, col: 2, shiptype: undefined, player: 'O' };
       expect(() =>
         game.applyMove({
           gameID: game.id,

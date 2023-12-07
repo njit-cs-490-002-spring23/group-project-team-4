@@ -127,7 +127,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
-    if (this.state.status !== 'IN_PROGRESS') {
+    if (this.state.status !== 'GUESSING') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
     /** check these */
@@ -209,6 +209,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       let impliedMove;
       let maxIndex;
       if (move.move.player === 'X') {
+        
         this.state.x_ships = this.state.x_ships.filter(ship => ship !== move.move.shiptype);
         this.state.x_board = this.state.x_board.concat(move.move);
         switch (move.move.shiptype) {
@@ -242,6 +243,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
           move.move = impliedMove;
           this.state.x_board = this.state.x_board.concat(move.move);
         }
+       
       } else {
         this.state.o_ships = this.state.o_ships.filter(ship => ship !== move.move.shiptype);
         this.state.o_board = this.state.o_board.concat(move.move);
@@ -277,7 +279,17 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
           this.state.x_board = this.state.x_board.concat(move.move);
         }
       }
-    } else {
+      // to check if all the ships have been placed 
+      if (this.state.o_ships.length === 0 && this.state.x_ships.length === 0){
+        this.state.status = 'GUESSING';
+      }
+    } 
+
+     else {
+      // to check if the game is in te guessing phase 
+      if(this.state.status !== 'GUESSING'){
+        throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE)
+      }
       /* * guess move */
       this._validateGuessMove(move);
       if (!this._isHit(move)) {
