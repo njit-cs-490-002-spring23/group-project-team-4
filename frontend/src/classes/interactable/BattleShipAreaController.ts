@@ -51,6 +51,32 @@ export default class BattleShipAreaController extends GameAreaController<
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
 
+  private _currentXGuessBoard: BattleShipCell[][] = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ];
+
+  private _currentOGeussBoard: BattleShipCell[][] = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ];
+
   /**
    * Returns the current state of the board.
    *
@@ -61,10 +87,18 @@ export default class BattleShipAreaController extends GameAreaController<
    * and board[2][2] is the bottom-right cell
    */
   get board(): BattleShipCell[][] {
-    if (this._townController.ourPlayer === this.x) {
+    if (this._townController.ourPlayer === this.x && this.moveCount === 0) {
       return this._currentXBoard;
-    } else {
+    } else if (this._townController.ourPlayer === this.o && this.moveCount === 0) {
       return this._currentOBoard;
+    } else if (
+      this._townController.ourPlayer === this.x &&
+      this.moveCount > 0 &&
+      this.whoseTurn === this.x
+    ) {
+      return this._currentXGuessBoard;
+    } else {
+      return this._currentOGeussBoard;
     }
     //TODO
   }
@@ -234,7 +268,7 @@ export default class BattleShipAreaController extends GameAreaController<
       return this._model.game?.state.o_ships[0];
     } else if (this.isActive()) {
       return 'guess';
-    } else{
+    } else {
       //potentially throw error here
       return 'guess';
     }
