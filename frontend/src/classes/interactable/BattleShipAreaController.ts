@@ -12,7 +12,7 @@ export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
 
 export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 
-export type BattleShipCell = 3 | 2 | 1 | 0 | undefined;
+export type BattleShipCell = 3 | 2 | 1 | 0 | 'C' | 'B' | 'R' | 'D' | 'S' | 'H' |undefined;
 export type BattleShipEvents = GameEventTypes & {
   boardChanged: (board: BattleShipCell[][]) => void;
   turnChanged: (isOurTurn: boolean) => void;
@@ -259,14 +259,16 @@ export default class BattleShipAreaController extends GameAreaController<
       this._model.game?.state.x_ships.length !== 0
     ) {
       return this._model.game?.state.x_ships[0];
-    } else if (
+    }
+    if (
       this.isActive() &&
       this._townController.ourPlayer === this.o &&
       this._model.game?.state.o_ships !== undefined &&
       this._model.game?.state.o_ships.length !== 0
     ) {
       return this._model.game?.state.o_ships[0];
-    } else if (this.isActive()) {
+    }
+    if (this.isActive()) {
       return 'guess';
     } else {
       //potentially throw error here
@@ -309,7 +311,13 @@ export default class BattleShipAreaController extends GameAreaController<
           // if the value at row and col is 0, then change it to 3 to indicate that it is a miss
           if (newBoard[row][col] === 0) {
             newBoard[row][col] = 3;
-          } else if (newBoard[row][col] === 1) {
+          } else if (
+            newBoard[row][col] === 'C' ||
+            newBoard[row][col] === 'B' ||
+            newBoard[row][col] === 'R' ||
+            newBoard[row][col] === 'S' ||
+            newBoard[row][col] === 'D'
+          ) {
             // if the value at row and col is 1, then change it to 2 to indicate that it is a hit
             newBoard[row][col] = 2;
           } else if (newBoard[row][col] === 2) {
@@ -340,68 +348,69 @@ export default class BattleShipAreaController extends GameAreaController<
     if (this.isOurTurn) {
       switch (newModel.game?.state.x_board[newModel.game?.state.x_board.length - 1].shiptype) {
         case 'battleship':
-          if (newModel.game.state.turn === 'X') {
+          if (this._townController.ourPlayer === this.x) {
             row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 4].row;
             col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 4].col;
-          } else {
+          } else if (this._townController.ourPlayer === this.o) {
             row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 4].row;
             col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 4].col;
           }
           for (let i = 0; i < 4; i += 1) {
-            ourBoard[row][col + i] = 1;
+            ourBoard[row][col + i] = 'B';
           }
           break;
         case 'carrier':
-          if (newModel.game.state.turn === 'X') {
+          if (this._townController.ourPlayer === this.x) {
             row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 5].row;
             col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 5].col;
-          } else {
+          } else if (this._townController.ourPlayer === this.o) {
             row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 5].row;
             col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 5].col;
           }
           for (let i = 0; i < 5; i += 1) {
-            ourBoard[row][col + i] = 1;
+            ourBoard[row][col + i] = 'C';
           }
           break;
         case 'criuser':
-          if (newModel.game.state.turn === 'X') {
+          if (this._townController.ourPlayer === this.x) {
             row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].row;
             col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].col;
-          } else {
+          } else if (this._townController.ourPlayer === this.o) {
             row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].row;
             col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].col;
           }
           for (let i = 0; i < 3; i += 1) {
-            ourBoard[row][col + i] = 1;
+            ourBoard[row][col + i] = 'R';
           }
           break;
 
         case 'submarine':
-          if (newModel.game.state.turn === 'X') {
+          if (this._townController.ourPlayer === this.x) {
             row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].row;
             col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].col;
-          } else {
+          } else if (this._townController.ourPlayer === this.o) {
             row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].row;
             col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].col;
           }
           for (let i = 0; i < 3; i += 1) {
-            ourBoard[row][col + i] = 1;
+            ourBoard[row][col + i] = 'S';
           }
           break;
 
         case 'destroyer':
-          if (newModel.game.state.turn === 'X') {
+          if (this._townController.ourPlayer === this.x) {
             row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 2].row;
             col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 2].col;
-          } else {
+          } else if (this._townController.ourPlayer === this.o) {
             row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 2].row;
             col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 2].col;
           }
           for (let i = 0; i < 2; i += 1) {
-            ourBoard[row][col + i] = 1;
+            ourBoard[row][col + i] = 'D';
           }
           break;
       }
+      this.emit('boardChanged', ourBoard);
     }
   }
 

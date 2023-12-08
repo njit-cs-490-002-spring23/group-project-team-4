@@ -1,5 +1,5 @@
 import { Button, chakra, Container, Grid } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
 import { BattleShipGridPosition } from '../../../../types/CoveyTownSocket';
 
@@ -58,19 +58,11 @@ const StyledBattleShipBoard = chakra(Container, {
  * A component that renders the Battleship board
  */
 export default function BattleShipBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
-  const [refreshFlag, setRefreshFlag] = useState(false);
-  const makeBattleShipMove = async (row: BattleShipGridPosition, col: BattleShipGridPosition) => {
-    try {
-      await gameAreaController.makeMove(row, col, gameAreaController.Ship);
-      setRefreshFlag(prev => !prev); // Toggle the flag to refresh the component
-    } catch (error) {}
-  };
-
   const renderSquare = (rowIndex: BattleShipGridPosition, colIndex: BattleShipGridPosition) => (
     <StyledBattleShipSquare
       key={`${rowIndex}-${colIndex}`}
       aria-label={`Cell ${rowIndex},${colIndex}`}
-      onClick={() => makeBattleShipMove(rowIndex, colIndex)}>
+      >
       {gameAreaController.board[rowIndex][colIndex]}
     </StyledBattleShipSquare>
   );

@@ -62,6 +62,7 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
   const [statusMsg, setStatusMsg] = useState('');
   const [playerO, setPlayerO] = useState('  ');
   const [playerX, setPlayerX] = useState('   ');
+  const [currentShip, setCurrenShip] = useState('      ');
 
   /** Winner */
   useEffect(() => {
@@ -109,26 +110,26 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
       });
     }
   };
-  useEffect(() => {
-    // Fetch or update game state based on the refreshFlag
-    // This effect will run when the component mounts and whenever refreshFlag changes
-    // Add necessary logic to update the game state or other relevant data
+  
+  const updateGameState = useCallback(() => {
+    setGameState(gameAreaController);
+    // Other state updates based on the new gameState...
+  }, [gameAreaController]);
 
-    const stateListener = () => {
-      const currentRef = ref.current;
-      if (currentRef !== undefined && currentRef.moveCount > gameState.moveCount) {
-        setGameState(currentRef);
-      }
-    };
+  useEffect(() => {
+    const stateListener = () => updateGameState();
 
     gameAreaController.addListener('gameUpdated', stateListener);
     gameAreaController.addListener('gameEnd', stateListener);
+
+    // Initial update on mount
+    updateGameState();
 
     return () => {
       gameAreaController.removeListener('gameEnd', stateListener);
       gameAreaController.removeListener('gameUpdated', stateListener);
     };
-  }, [gameAreaController, gameState, refreshFlag]); // Include refreshFlag as a dependency
+  }, [gameAreaController, updateGameState, refreshFlag]); // Include refreshFlag as a dependency
 
   if (
     gameAreaController.status === 'WAITING_TO_START' ||
@@ -154,7 +155,13 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
       </Button>
     );
   }
-
+  /**Display Ship */
+  useEffect(() => {
+    const ship = (controller: BattleShipAreaController) => {
+      setCurrenShip(controller.Ship);
+    };
+    ship(gameAreaController);
+  }, [gameAreaController, refreshFlag]);
   /** Player List */
   useEffect(() => {
     const determinePlayers = (controller: BattleShipAreaController) => {
@@ -201,12 +208,13 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
   return (
     <>
       <Leaderboard results={gameState.history} />
+      <div>{currentShip}</div>
       <BattleShipBoard gameAreaController={gameState} />
 
       <h1
         style={{
           textAlign: 'center',
-          color: '#4299e1', // Example: Nice shade of blue
+          color: '#4299e1', // blue
           margin: '0', // Remove default margin
           padding: '20px', // Add some padding
           fontSize: '2rem', // Increase font size

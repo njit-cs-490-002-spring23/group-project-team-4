@@ -25,8 +25,8 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       moves: [],
       x_board: [],
       o_board: [],
-      x_ships: ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'],
-      o_ships: ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'],
+      x_ships: ['carrier', 'battleship', 'criuser', 'submarine', 'destroyer'],
+      o_ships: ['carrier', 'battleship', 'criuser', 'submarine', 'destroyer'],
       status: 'WAITING_TO_START',
       turn: 'X',
     });
@@ -149,28 +149,28 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
         throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
       }
     switch (move.move.shiptype) {
+      case 'carrier':
+        if (move.move.row > 4) {
+          throw new InvalidParametersError('Index out of bounds');
+        }
+        break;
       case 'battleship':
         if (move.move.row > 5) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
-      case 'carrier':
+      case 'criuser':
         if (move.move.row > 6) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
-      case 'criuser':
-        if (move.move.row > 7) {
+      case 'submarine':
+        if (move.move.row > 6) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
       case 'destroyer':
         if (move.move.row > 7) {
-          throw new InvalidParametersError('Index out of bounds');
-        }
-        break;
-      case 'submarine':
-        if (move.move.row > 8) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
@@ -191,19 +191,19 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
         this.state.x_ships = this.state.x_ships.filter(ship => ship !== move.move.shiptype);
         this.state.x_board = this.state.x_board.concat(move.move);
         switch (move.move.shiptype) {
-          case 'battleship':
+          case 'carrier':
             maxIndex = 5;
             break;
-          case 'carrier':
+          case 'battleship':
             maxIndex = 4;
             break;
           case 'criuser':
             maxIndex = 3;
             break;
-          case 'destroyer':
+          case 'submarine':
             maxIndex = 3;
             break;
-          case 'submarine':
+          case 'destroyer':
             maxIndex = 2;
             break;
           default:
@@ -225,19 +225,19 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
         this.state.o_ships = this.state.o_ships.filter(ship => ship !== move.move.shiptype);
         this.state.o_board = this.state.o_board.concat(move.move);
         switch (move.move.shiptype) {
-          case 'battleship':
+          case 'carrier':
             maxIndex = 5;
             break;
-          case 'carrier':
+          case 'battleship':
             maxIndex = 4;
             break;
           case 'criuser':
             maxIndex = 3;
             break;
-          case 'destroyer':
+          case 'submarine':
             maxIndex = 3;
             break;
-          case 'submarine':
+          case 'destroyer':
             maxIndex = 2;
             break;
           default:
