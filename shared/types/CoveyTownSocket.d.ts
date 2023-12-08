@@ -99,7 +99,7 @@ export interface GameMove<MoveType> {
 
 export type BattleShipGridPosition = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
-export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'destroyer';
+export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'destroyer' | 'guess';
 
 
 /**

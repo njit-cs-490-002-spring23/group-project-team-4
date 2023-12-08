@@ -183,7 +183,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     /* * placement move
      */ if (this.state.status !== 'IN_PROGRESS') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
-    } else if (move.move.shiptype !== undefined) {
+    } else if (move.move.shiptype !== 'guess') {
       this._validatePlacementMove(move);
       let impliedMove;
       let maxIndex;

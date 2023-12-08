@@ -217,6 +217,28 @@ export default class BattleShipAreaController extends GameAreaController<
     return false; //TODO
   }
 
+  get Ship(): BattleShip {
+    if (
+      this.isActive() &&
+      this._townController.ourPlayer === this.x &&
+      this._model.game?.state.x_ships !== undefined &&
+      this._model.game?.state.x_ships.length !== 0
+    ) {
+      return this._model.game?.state.x_ships[0];
+    } else if (
+      this.isActive() &&
+      this._townController.ourPlayer === this.o &&
+      this._model.game?.state.o_ships !== undefined &&
+      this._model.game?.state.o_ships.length !== 0
+    ) {
+      return this._model.game?.state.o_ships[0];
+    } else if (this.isActive()) {
+      return 'guess';
+    } else{
+      return 'guess';
+    }
+  }
+
   /**
    * Updates the internal state of this TicTacToeAreaController to match the new model.
    *

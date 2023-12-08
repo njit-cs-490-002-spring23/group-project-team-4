@@ -1,6 +1,7 @@
 import { Button, chakra, Container, Grid } from '@chakra-ui/react';
 import React from 'react';
 import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
+import { BattleShipGridPosition } from '../../../../types/CoveyTownSocket';
 
 export type BattleShipGameProps = {
   gameAreaController: BattleShipAreaController;
@@ -57,8 +58,24 @@ const StyledBattleShipBoard = chakra(Container, {
  * A component that renders the Battleship board
  */
 export default function BattleShipBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
+  const [refreshFlag, setRefreshFlag] = useState(false);
+  const makeBattleShipMove = async (row: BattleShipGridPosition, col: BattleShipGridPosition) => {
+    try {
+      await gameAreaController.makeMove(row, col, gameAreaController.Ship);
+      setRefreshFlag(prev => !prev); // Toggle the flag to refresh the component
+    } catch (error) {
+      winToast({
+        description: 'Error on joining',
+        status: 'error',
+      });
+    }
+  };
+
   const renderSquare = (rowIndex: number, colIndex: number) => (
-    <StyledBattleShipSquare key={`${rowIndex}-${colIndex}`} aria-label={`Cell ${rowIndex},${colIndex}`}>
+    <StyledBattleShipSquare
+      key={`${rowIndex}-${colIndex}`}
+      aria-label={`Cell ${rowIndex},${colIndex}`}
+      onClick={makeBattleShipMove(rowIndex, colIndex)}>
       {gameAreaController.board[rowIndex][colIndex]}
     </StyledBattleShipSquare>
   );
@@ -74,8 +91,6 @@ export default function BattleShipBoard({ gameAreaController }: BattleShipGamePr
   };
 
   return (
-    <StyledBattleShipBoard aria-label='Battleship Board'>
-      {renderRows()}
-    </StyledBattleShipBoard>
+    <StyledBattleShipBoard aria-label='Battleship Board'>{renderRows()}</StyledBattleShipBoard>
   );
 }
