@@ -235,6 +235,7 @@ export default class BattleShipAreaController extends GameAreaController<
     } else if (this.isActive()) {
       return 'guess';
     } else{
+      //potentially throw error here
       return 'guess';
     }
   }
