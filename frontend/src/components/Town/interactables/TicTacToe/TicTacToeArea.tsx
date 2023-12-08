@@ -104,32 +104,29 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
       await gameAreaController.joinGame();
       setRefreshFlag(prev => !prev); // Toggle the flag to refresh the component
     } catch (error) {
-      winToast({
+      winToast({ 
         description: 'Error on joining',
         status: 'error',
       });
     }
   };
-  
-  const updateGameState = useCallback(() => {
-    setGameState(gameAreaController);
-    // Other state updates based on the new gameState...
-  }, [gameAreaController]);
 
   useEffect(() => {
-    const stateListener = () => updateGameState();
-
+    const stateListener = () => {
+      const currentRef = ref.current;
+      if (currentRef !== undefined) {
+        setGameState(currentRef);
+        setRefreshFlag(prev => !prev);
+      }
+    };
     gameAreaController.addListener('gameUpdated', stateListener);
     gameAreaController.addListener('gameEnd', stateListener);
-
-    // Initial update on mount
-    updateGameState();
-
     return () => {
       gameAreaController.removeListener('gameEnd', stateListener);
       gameAreaController.removeListener('gameUpdated', stateListener);
     };
-  }, [gameAreaController, updateGameState, refreshFlag]); // Include refreshFlag as a dependency
+  }, [gameAreaController, gameState, refreshFlag]);
+  /** Winner */ // Include refreshFlag as a dependency
 
   if (
     gameAreaController.status === 'WAITING_TO_START' ||
