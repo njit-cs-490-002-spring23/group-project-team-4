@@ -1,6 +1,6 @@
 import { Button, chakra, Container, Grid } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
-import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
+import BattleShipAreaController, { BattleShipCell, BattleShipCell } from '../../../../classes/interactable/BattleShipAreaController';
 import { BattleShipGridPosition } from '../../../../types/CoveyTownSocket';
 
 export type BattleShipGameProps = {
@@ -56,20 +56,57 @@ const StyledBattleShipBoard = chakra(Container, {
  * A component that renders the Battleship board
  */
 export default function BattleShipBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
+  const [board, setBoard] = useState(gameAreaController.board);
+
+  useEffect(() => {
+    const handleBoardChange = () => {
+      setBoard(gameAreaController.board);
+    };
+
+    gameAreaController.addListener('boardChanged', handleBoardChange);
+
+    return () => {
+      gameAreaController.removeListener('boardChanged', handleBoardChange);
+    };
+  }, [gameAreaController]);
   const makeBattleShipMove = async (row: BattleShipGridPosition, col: BattleShipGridPosition) => {
     try {
       await gameAreaController.makeMove(row, col, gameAreaController.Ship);
     } catch (error) {}
   };
 
-  const renderSquare = (rowIndex: BattleShipGridPosition, colIndex: BattleShipGridPosition) => (
-    <StyledBattleShipSquare
-      key={`${rowIndex}-${colIndex}`}
-      aria-label={`Cell ${rowIndex},${colIndex}`}
-      onClick={() => makeBattleShipMove(rowIndex, colIndex)}>
-      {gameAreaController.board[rowIndex][colIndex]}
-    </StyledBattleShipSquare>
-  );
+  const renderSquare = (rowIndex: BattleShipGridPosition, colIndex: BattleShipGridPosition) => {
+    const cellValue: BattleShipCell = board[rowIndex][colIndex];
+
+    // Custom styling or text based on the cell value
+    let displayValue = cellValue;
+    if (
+      cellValue === 'C' ||
+      cellValue === 'B' ||
+      cellValue === 'S' ||
+      cellValue === 'R' ||
+      cellValue === 'D'
+    ) {
+      // If the cell is a ship, display ship symbol or custom styling
+      displayValue = cellValue;
+    } else if (cellValue === 1) {
+      // If the cell is hit, display a hit symbol or style
+      displayValue = 'H'; // Example symbol for hit
+    } else if (cellValue === 2) {
+      // If the cell is a miss, display a miss symbol or style
+      displayValue = 'H'; // Example symbol for miss
+    }
+    // Other cases like '0' or undefined can be handled as needed
+
+    return (
+      <StyledBattleShipSquare
+        key={`${rowIndex}-${colIndex}`}
+        aria-label={`Cell ${rowIndex},${colIndex}`}
+        onClick={() => makeBattleShipMove(rowIndex, colIndex)}>
+        {displayValue}
+      </StyledBattleShipSquare>
+    );
+  };
 
   const renderRows = () => {
     const rows = [];
@@ -84,4 +121,4 @@ export default function BattleShipBoard({ gameAreaController }: BattleShipGamePr
   return (
     <StyledBattleShipBoard aria-label='Battleship Board'>{renderRows()}</StyledBattleShipBoard>
   );
-}
+  }

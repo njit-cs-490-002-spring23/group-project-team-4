@@ -12,7 +12,7 @@ export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
 
 export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 
-export type BattleShipCell = 3 | 2 | 1 | 0 | 'C' | 'B' | 'R' | 'D' | 'S' | 'H' |undefined;
+export type BattleShipCell = 3 | 2 | 1 | 0 | 'C' | 'B' | 'R' | 'D' | 'S' | 'H' | undefined;
 export type BattleShipEvents = GameEventTypes & {
   boardChanged: (board: BattleShipCell[][]) => void;
   turnChanged: (isOurTurn: boolean) => void;
@@ -87,20 +87,20 @@ export default class BattleShipAreaController extends GameAreaController<
    * and board[2][2] is the bottom-right cell
    */
   get board(): BattleShipCell[][] {
-    if (this._townController.ourPlayer === this.x && this.moveCount === 0) {
-      return this._currentXBoard;
-    } else if (this._townController.ourPlayer === this.o && this.moveCount === 0) {
-      return this._currentOBoard;
-    } else if (
-      this._townController.ourPlayer === this.x &&
-      this.moveCount > 0 &&
-      this.whoseTurn === this.x
-    ) {
-      return this._currentXGuessBoard;
-    } else {
-      return this._currentOGeussBoard;
+    // If the game has not started, return the player's own board with their ship placements
+    if (this.Ship !== 'guess') {
+      return this._townController.ourPlayer === this.x ? this._currentXBoard : this._currentOBoard;
     }
-    //TODO
+
+    // Once the game has started, return the guess board when it's the player's turn
+    if (this.isOurTurn) {
+      return this._townController.ourPlayer === this.x
+        ? this._currentXGuessBoard
+        : this._currentOGeussBoard;
+    }
+
+    // When it's not the player's turn, show their own board with their ships
+    return this._townController.ourPlayer === this.x ? this._currentXBoard : this._currentOBoard;
   }
 
   /**
@@ -293,10 +293,12 @@ export default class BattleShipAreaController extends GameAreaController<
     // TODO: if moveCount is zero, game has just started, so update the board with ship placements
     const newPlaceCountX = newModel.game?.state.x_board.length;
     const newPlaceCountO = newModel.game?.state.o_board.length;
+    // Update X and O boards based on new ship placements
+    if (newPlaceCountX && newPlaceCountX > this._model.game?.state.x_board.length) {
+      this.placeShip(newModel.game?.state.x_board, this._currentXBoard);
+    }
     if (newPlaceCountO && newPlaceCountO > this._model.game?.state.o_board.length) {
-      this.placeShip(newModel);
-    } else if (newPlaceCountX && newPlaceCountX > this._model.game?.state.x_board.length) {
-      this.placeShip(newModel);
+      this.placeShip(newModel.game?.state.o_board, this._currentOBoard);
     }
     if (newMoveCount && newMoveCount > this.moveCount) {
       const newBoard = this.board;
@@ -341,77 +343,56 @@ export default class BattleShipAreaController extends GameAreaController<
   }
 
   // Horizontal implementation
-  protected placeShip(newModel: GameArea<BattleShipGameState>) {
-    const ourBoard = this.board;
-    let row;
-    let col;
-    if (this.isOurTurn) {
-      switch (newModel.game?.state.x_board[newModel.game?.state.x_board.length - 1].shiptype) {
-        case 'battleship':
-          if (this._townController.ourPlayer === this.x) {
-            row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 4].row;
-            col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 4].col;
-          } else if (this._townController.ourPlayer === this.o) {
-            row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 4].row;
-            col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 4].col;
-          }
-          for (let i = 0; i < 4; i += 1) {
-            ourBoard[row][col + i] = 'B';
-          }
-          break;
-        case 'carrier':
-          if (this._townController.ourPlayer === this.x) {
-            row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 5].row;
-            col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 5].col;
-          } else if (this._townController.ourPlayer === this.o) {
-            row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 5].row;
-            col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 5].col;
-          }
-          for (let i = 0; i < 5; i += 1) {
-            ourBoard[row][col + i] = 'C';
-          }
-          break;
-        case 'criuser':
-          if (this._townController.ourPlayer === this.x) {
-            row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].row;
-            col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].col;
-          } else if (this._townController.ourPlayer === this.o) {
-            row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].row;
-            col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].col;
-          }
-          for (let i = 0; i < 3; i += 1) {
-            ourBoard[row][col + i] = 'R';
-          }
-          break;
-
-        case 'submarine':
-          if (this._townController.ourPlayer === this.x) {
-            row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].row;
-            col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 3].col;
-          } else if (this._townController.ourPlayer === this.o) {
-            row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].row;
-            col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 3].col;
-          }
-          for (let i = 0; i < 3; i += 1) {
-            ourBoard[row][col + i] = 'S';
-          }
-          break;
-
-        case 'destroyer':
-          if (this._townController.ourPlayer === this.x) {
-            row = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 2].row;
-            col = newModel.game?.state.x_board[newModel.game?.state.x_board.length - 2].col;
-          } else if (this._townController.ourPlayer === this.o) {
-            row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 2].row;
-            col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 2].col;
-          }
-          for (let i = 0; i < 2; i += 1) {
-            ourBoard[row][col + i] = 'D';
-          }
-          break;
-      }
-      this.emit('boardChanged', ourBoard);
+  // Modify placeShip method to take an additional parameter for player type
+  protected placeShip(
+    boardModel: GameArea<BattleShipGameState>,
+    boardToUpdate: BattleShipCell[][],
+  ): void {
+    let boardData;
+    if (this._townController.ourPlayer === this.x) {
+      boardData = boardModel.game?.state.x_board;
+    } else {
+      boardData = boardModel.game?.state.o_board;
     }
+    if (!boardData || boardData.length === 0) return;
+
+    // Last entry in boardData should be the latest ship placement
+    const latestShip = boardData[boardData.length - 1];
+
+    // Use the ship type to determine the size and place it on the board
+    let shipSize;
+    let shipSymbol: BattleShipCell;
+    switch (latestShip.shiptype) {
+      case 'battleship':
+        shipSize = 4;
+        shipSymbol = 'B';
+        break;
+      case 'carrier':
+        shipSize = 5;
+        shipSymbol = 'C';
+        break;
+      case 'criuser':
+        shipSize = 3;
+        shipSymbol = 'R';
+        break;
+      case 'submarine':
+        shipSize = 3;
+        shipSymbol = 'S';
+        break;
+      case 'destroyer':
+        shipSize = 2;
+        shipSymbol = 'D';
+        break;
+      default:
+        return; // Invalid ship type
+    }
+
+    // Assuming horizontal placement for simplicity
+    for (let i = 0; i < shipSize; i++) {
+      boardToUpdate[latestShip.row][latestShip.col + i] = shipSymbol;
+    }
+
+    this.emit('boardChanged', boardToUpdate);
   }
 
   /**
