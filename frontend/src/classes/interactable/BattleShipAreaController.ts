@@ -313,7 +313,7 @@ export default class BattleShipAreaController extends GameAreaController<
             row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 4].row;
             col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 4].col;
           }
-          for (let i = 0; i < 5; i += 1) {
+          for (let i = 0; i < 4; i += 1) {
             ourBoard[row][col + i] = 1;
           }
           break;
@@ -325,7 +325,7 @@ export default class BattleShipAreaController extends GameAreaController<
             row = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 5].row;
             col = newModel.game?.state.o_board[newModel.game?.state.o_board.length - 5].col;
           }
-          for (let i = 0; i < 4; i += 1) {
+          for (let i = 0; i < 5; i += 1) {
             ourBoard[row][col + i] = 1;
           }
           break;
