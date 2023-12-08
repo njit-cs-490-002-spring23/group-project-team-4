@@ -32,7 +32,6 @@ const StyledBattleShipSquare = chakra(Button, {
   },
 });
 
-
 /**
  * A component that will render the Battleship board, styled
  */
@@ -53,16 +52,21 @@ const StyledBattleShipBoard = chakra(Container, {
   },
 });
 
-
 /**
  * A component that renders the Battleship board
  */
 export default function BattleShipBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
+  const makeBattleShipMove = async (row: BattleShipGridPosition, col: BattleShipGridPosition) => {
+    try {
+      await gameAreaController.makeMove(row, col, gameAreaController.Ship);
+    } catch (error) {}
+  };
+
   const renderSquare = (rowIndex: BattleShipGridPosition, colIndex: BattleShipGridPosition) => (
     <StyledBattleShipSquare
       key={`${rowIndex}-${colIndex}`}
       aria-label={`Cell ${rowIndex},${colIndex}`}
-      >
+      onClick={() => makeBattleShipMove(rowIndex, colIndex)}>
       {gameAreaController.board[rowIndex][colIndex]}
     </StyledBattleShipSquare>
   );

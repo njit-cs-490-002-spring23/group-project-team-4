@@ -138,9 +138,9 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
     }
     let board;
-    if (this.state.turn === 'X') {
+    if (move.move.player === 'X') {
       board = this.state.x_board;
-    } else if (this.state.turn === 'O') {
+    } else if (move.move.player === 'O') {
       board = this.state.o_board;
     }
     /* check this */
