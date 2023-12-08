@@ -28,7 +28,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       x_ships: ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'],
       o_ships: ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'],
       status: 'WAITING_TO_START',
-      turn: undefined,
+      turn: 'X',
     });
   }
 
@@ -53,17 +53,21 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     }
     return board;
   } */
-  /*
   private _isHit(move: GameMove<BattleShipMove>): boolean {
     // to check if a ship is hit
-    const { board } = this.state;
+    let board;
+    if (move.move.player === 'O') {
+      board = this.state.x_board;
+    } else {
+      board = this.state.o_board;
+    }
     for (const placement of board) {
-      if (placement.row === move.row && placement.col === move.col) {
+      if (placement.row === move.move.row && placement.col === move.move.col) {
         return true;
       }
     }
     return false;
-  }*/
+  }
 
   private _updateTurn() {
     // the turn will be set to X by default in the beginnng of the game
@@ -124,14 +128,33 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
     if (this.state.status !== 'IN_PROGRESS') {
-      throw GAME_NOT_IN_PROGRESS_MESSAGE;
+      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
-    if (this.state.turn === 'X' && this.state.o_board.length > this.state.x_board.length) {
+    /** check these */
+    if (this.state.turn === 'X' && move.move.player === 'O') {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
-    } else if (this.state.turn === 'O' && this.state.o_board.length < this.state.x_board.length) {
+    } else if (this.state.turn === 'O' && move.move.player === 'X') {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
+    if (move.move.col > 9 || move.move.row > 9) {
+      throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
+    }
+    for (const m of this.state.moves) {
+      if (move.move.row === m.row && move.move.col === m.col && m.player === move.move.player) {
+        throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
+      }
+    }
+  }
 
+  /**
+   * Logic for validating ship placement
+   * throw game_not in progress error if game is in progress
+   * throw out of bounds error if placement goes outside board
+   */
+  private _validatePlacementMove(move: GameMove<BattleShipMove>) {
+    if (this.state.status !== 'IN_PROGRESS') {
+      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+    }
     if (move.move.col > 9 || move.move.row > 9) {
       throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
     }
@@ -141,103 +164,125 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     } else if (this.state.turn === 'O') {
       board = this.state.o_board;
     }
+    /* check this */
     for (const m of board)
       if (move.move.row === m.row && move.move.col === m.col) {
         throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
       }
+    switch (move.move.shiptype) {
+      case 'carrier':
+        if (move.move.col > 4) {
+          throw new InvalidParametersError('Index out of bounds');
+        }
+        break;
+      case 'battleship':
+        if (move.move.col > 5) {
+          throw new InvalidParametersError('Index out of bounds');
+        }
+        break;
+      case 'criuser':
+        if (move.move.col > 6) {
+          throw new InvalidParametersError('Index out of bounds');
+        }
+        break;
+      case 'submarine':
+        if (move.move.col > 6) {
+          throw new InvalidParametersError('Index out of bounds');
+        }
+        break;
+      case 'destroyer':
+        if (move.move.col > 7) {
+          throw new InvalidParametersError('Index out of bounds');
+        }
+        break;
+      default:
+        break;
+    }
   }
-
-  /*private _validatePlacementMove(move: GameMove<BattleShipMove>) {
-    // Implement validation logic for a move in Battleship
-    // - Check if it's the player's turn
-    // - Check if the move is within the bounds of the board
-    // - Check if the game is in progress
-  }*/
 
   public applyMove(move: GameMove<BattleShipMove>): void {
     /* * placement move
      */ if (this.state.status !== 'IN_PROGRESS') {
-      throw GAME_NOT_IN_PROGRESS_MESSAGE;
+      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     } else if (move.move.shiptype !== undefined) {
-      //this._validatePlacementMove(move);
-      let _impliedMove;
-      let _maxIndex;
+      this._validatePlacementMove(move);
+      let impliedMove;
+      let maxIndex;
       if (move.move.player === 'X') {
         this.state.x_ships = this.state.x_ships.filter(ship => ship !== move.move.shiptype);
         this.state.x_board = this.state.x_board.concat(move.move);
         switch (move.move.shiptype) {
-          case 'battleship':
-            _maxIndex = 5;
-            break;
           case 'carrier':
-            _maxIndex = 4;
+            maxIndex = 5;
+            break;
+          case 'battleship':
+            maxIndex = 4;
             break;
           case 'criuser':
-            _maxIndex = 3;
-            break;
-          case 'destroyer':
-            _maxIndex = 3;
+            maxIndex = 3;
             break;
           case 'submarine':
-            _maxIndex = 2;
+            maxIndex = 3;
+            break;
+          case 'destroyer':
+            maxIndex = 2;
             break;
           default:
-            _maxIndex = 0;
+            maxIndex = 0;
             break;
         }
-        for (var i = 1; i < _maxIndex; i += 1) {
-          const _column = <BattleShipGridPosition>(move.move.col + i);
-          _impliedMove = {
+        for (let i = 1; i < maxIndex; i += 1) {
+          const column = <BattleShipGridPosition>(move.move.col + i);
+          impliedMove = {
             row: move.move.row,
-            col: _column,
+            col: column,
             shiptype: move.move.shiptype,
             player: move.move.player,
           };
-          move.move = _impliedMove;
+          move.move = impliedMove;
           this.state.x_board = this.state.x_board.concat(move.move);
         }
       } else {
         this.state.o_ships = this.state.o_ships.filter(ship => ship !== move.move.shiptype);
         this.state.o_board = this.state.o_board.concat(move.move);
         switch (move.move.shiptype) {
-          case 'battleship':
-            _maxIndex = 5;
-            break;
           case 'carrier':
-            _maxIndex = 4;
+            maxIndex = 5;
+            break;
+          case 'battleship':
+            maxIndex = 4;
             break;
           case 'criuser':
-            _maxIndex = 3;
-            break;
-          case 'destroyer':
-            _maxIndex = 3;
+            maxIndex = 3;
             break;
           case 'submarine':
-            _maxIndex = 2;
+            maxIndex = 3;
+            break;
+          case 'destroyer':
+            maxIndex = 2;
             break;
           default:
-            _maxIndex = 0;
+            maxIndex = 0;
             break;
         }
-        for (var i = 1; i < _maxIndex; i += 1) {
-          const _column = <BattleShipGridPosition>(move.move.col + i);
-          _impliedMove = {
+        for (let i = 1; i < maxIndex; i += 1) {
+          const column = <BattleShipGridPosition>(move.move.col + i);
+          impliedMove = {
             row: move.move.row,
-            col: _column,
+            col: column,
             shiptype: move.move.shiptype,
             player: move.move.player,
           };
-          move.move = _impliedMove;
+          move.move = impliedMove;
           this.state.x_board = this.state.x_board.concat(move.move);
         }
       }
     } else {
-      /* * guess move
-       */
+      /* * guess move */
       this._validateGuessMove(move);
-      //if (!this._isHit(move)) {
-        /** update turn */
-      //}
+      if (!this._isHit(move)) {
+        this._updateTurn();
+      }
       this.state.moves = this.state.moves.concat(move.move);
       this._checkForGameEnding();
     }
