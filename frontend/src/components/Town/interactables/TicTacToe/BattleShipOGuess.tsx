@@ -58,12 +58,14 @@ const StyledBattleShipBoard = chakra(Container, {
 /**
  * A component that renders the Battleship board
  */
-export default function BattleShipXBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
-  const [board, setBoard] = useState(gameAreaController.xBoard);
+export default function BattleShipOGuessBoard({
+  gameAreaController,
+}: BattleShipGameProps): JSX.Element {
+  const [board, setBoard] = useState(gameAreaController.oGuessBoard);
 
   useEffect(() => {
     const handleBoardChange = () => {
-      setBoard(gameAreaController.xBoard);
+      setBoard(gameAreaController.oGuessBoard);
     };
 
     gameAreaController.addListener('boardChanged', handleBoardChange);
@@ -74,9 +76,7 @@ export default function BattleShipXBoard({ gameAreaController }: BattleShipGameP
   }, [gameAreaController]);
   const makeBattleShipMove = async (row: BattleShipGridPosition, col: BattleShipGridPosition) => {
     try {
-      if (gameAreaController.Ship !== 'guess') {
-        await gameAreaController.makeMove(row, col, gameAreaController.Ship);
-      }
+      await gameAreaController.makeMove(row, col, gameAreaController.Ship);
     } catch (error) {}
   };
 
@@ -108,6 +108,8 @@ export default function BattleShipXBoard({ gameAreaController }: BattleShipGameP
   };
 
   return (
-    <StyledBattleShipBoard aria-label='Battleship X Board'>{renderRows()}</StyledBattleShipBoard>
+    <StyledBattleShipBoard aria-label='Battleship O Guess Board'>
+      {renderRows()}
+    </StyledBattleShipBoard>
   );
 }

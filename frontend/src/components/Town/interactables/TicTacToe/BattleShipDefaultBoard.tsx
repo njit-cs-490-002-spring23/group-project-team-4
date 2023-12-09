@@ -58,12 +58,14 @@ const StyledBattleShipBoard = chakra(Container, {
 /**
  * A component that renders the Battleship board
  */
-export default function BattleShipXBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
-  const [board, setBoard] = useState(gameAreaController.xBoard);
+export default function BattleShipDefaultBoard({
+  gameAreaController,
+}: BattleShipGameProps): JSX.Element {
+  const [board, setBoard] = useState(gameAreaController.defaultBoard);
 
   useEffect(() => {
     const handleBoardChange = () => {
-      setBoard(gameAreaController.xBoard);
+      setBoard(gameAreaController.defaultBoard);
     };
 
     gameAreaController.addListener('boardChanged', handleBoardChange);
@@ -72,13 +74,6 @@ export default function BattleShipXBoard({ gameAreaController }: BattleShipGameP
       gameAreaController.removeListener('boardChanged', handleBoardChange);
     };
   }, [gameAreaController]);
-  const makeBattleShipMove = async (row: BattleShipGridPosition, col: BattleShipGridPosition) => {
-    try {
-      if (gameAreaController.Ship !== 'guess') {
-        await gameAreaController.makeMove(row, col, gameAreaController.Ship);
-      }
-    } catch (error) {}
-  };
 
   const renderSquare = (rowIndex: BattleShipGridPosition, colIndex: BattleShipGridPosition) => {
     const cellValue: BattleShipCell = board[rowIndex][colIndex];
@@ -90,8 +85,7 @@ export default function BattleShipXBoard({ gameAreaController }: BattleShipGameP
     return (
       <StyledBattleShipSquare
         key={`${rowIndex}-${colIndex}`}
-        aria-label={`Cell ${rowIndex},${colIndex}`}
-        onClick={() => makeBattleShipMove(rowIndex, colIndex)}>
+        aria-label={`Cell ${rowIndex},${colIndex}`}>
         {displayValue}
       </StyledBattleShipSquare>
     );
@@ -108,6 +102,8 @@ export default function BattleShipXBoard({ gameAreaController }: BattleShipGameP
   };
 
   return (
-    <StyledBattleShipBoard aria-label='Battleship X Board'>{renderRows()}</StyledBattleShipBoard>
+    <StyledBattleShipBoard aria-label='Battleship Default Board'>
+      {renderRows()}
+    </StyledBattleShipBoard>
   );
 }

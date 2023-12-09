@@ -16,6 +16,11 @@ import GameAreaInteractable from '../GameArea';
 import Leaderboard from '../Leaderboard';
 import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
 import BattleShipBoard from './TicTacToeBoard';
+import BattleShipDefaultBoard from './BattleShipDefaultBoard';
+import BattleShipXGuessBoard from './BattleShipXGuess';
+import BattleShipXBoard from './TicTacToeBoard';
+import BattleShipOGuessBoard from './BattleShipOGuess';
+import BattleShipOBoard from './BattleShipOBoard';
 
 /**
  * The TicTacToeArea component renders the TicTacToe game area.
@@ -62,7 +67,7 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
   const [statusMsg, setStatusMsg] = useState('');
   const [playerO, setPlayerO] = useState('  ');
   const [playerX, setPlayerX] = useState('   ');
-  const [currentShip, setCurrenShip] = useState('      ');
+  const [currentShip, setCurrentShip] = useState('      ');
 
   /** Winner */
   useEffect(() => {
@@ -104,7 +109,7 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
       await gameAreaController.joinGame();
       setRefreshFlag(prev => !prev); // Toggle the flag to refresh the component
     } catch (error) {
-      winToast({ 
+      winToast({
         description: 'Error on joining',
         status: 'error',
       });
@@ -155,10 +160,51 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
   /**Display Ship */
   useEffect(() => {
     const ship = (controller: BattleShipAreaController) => {
-      setCurrenShip(controller.Ship);
+      setCurrentShip(controller.Ship);
     };
     ship(gameAreaController);
   }, [gameAreaController, refreshFlag]);
+
+  /** Determine Board to Display */
+  const [currentBoard, setCurrentBoard] = useState(
+    <BattleShipDefaultBoard gameAreaController={gameState} />,
+  );
+  const board = useCallback(
+    (controller: BattleShipAreaController) => {
+      if (controller.status === 'IN_PROGRESS') {
+        if (townController.ourPlayer === controller.x && controller.Ship !== 'guess') {
+          setCurrentBoard(<BattleShipXBoard gameAreaController={controller} />);
+        } else if (townController.ourPlayer === controller.o && controller.Ship !== 'guess') {
+          setCurrentBoard(<BattleShipOBoard gameAreaController={controller} />);
+        }
+        if (townController.ourPlayer === controller.x && controller.whoseTurn === controller.x) {
+          setCurrentBoard(<BattleShipXGuessBoard gameAreaController={controller} />);
+        } else if (
+          townController.ourPlayer === controller.x &&
+          controller.whoseTurn === controller.o
+        ) {
+          setCurrentBoard(<BattleShipXBoard gameAreaController={controller} />);
+        }
+        if (
+          townController.ourPlayer === controller.o &&
+          controller.whoseTurn === gameAreaController.o
+        ) {
+          setCurrentBoard(<BattleShipOGuessBoard gameAreaController={controller} />);
+        } else if (
+          townController.ourPlayer === controller.o &&
+          controller.whoseTurn === controller.x
+        ) {
+          setCurrentBoard(<BattleShipOBoard gameAreaController={controller} />);
+        }
+      } else {
+        setCurrentBoard(<BattleShipDefaultBoard gameAreaController={controller} />);
+      }
+    },
+    [gameAreaController, townController.ourPlayer],
+  );
+  useEffect(() => {
+    board(gameState);
+  }, [gameAreaController, gameState, townController.ourPlayer, refreshFlag, board]);
   /** Player List */
   useEffect(() => {
     const determinePlayers = (controller: BattleShipAreaController) => {
@@ -206,7 +252,7 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
     <>
       <Leaderboard results={gameState.history} />
       <div>{currentShip}</div>
-      <BattleShipBoard gameAreaController={gameState} />
+      {currentBoard}
 
       <h1
         style={{
