@@ -5,15 +5,17 @@ import {
   ModalHeader,
   ModalOverlay,
   useToast,
+  Button,
+  Heading,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import TicTacToeAreaController from '../../../../classes/interactable/TicTacToeAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
 import { InteractableID } from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
-import TicTacToeBoard from './TicTacToeBoard';
 import Leaderboard from '../Leaderboard';
+import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
+import BattleShipBoard from './TicTacToeBoard';
 
 /**
  * The TicTacToeArea component renders the TicTacToe game area.
@@ -47,31 +49,21 @@ import Leaderboard from '../Leaderboard';
  *    - Our player lost: description 'You lost :('
  *
  */
-function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
-  const gameAreaController = useInteractableAreaController<TicTacToeAreaController>(interactableID);
+
+function BattleShipArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
+  const gameAreaController =
+    useInteractableAreaController<BattleShipAreaController>(interactableID);
   let joinButton;
   const winToast = useToast();
   const townController = useTownController();
   const [gameState, setGameState] = useState(gameAreaController);
   const [winDescription, setWinDescription] = useState(' ');
-  const ref = useRef<TicTacToeAreaController>(gameAreaController);
+  const ref = useRef<BattleShipAreaController>(gameAreaController);
   const [statusMsg, setStatusMsg] = useState('');
   const [playerO, setPlayerO] = useState('  ');
   const [playerX, setPlayerX] = useState('   ');
-  useEffect(() => {
-    const stateListener = () => {
-      const currentRef = ref.current;
-      if (currentRef !== undefined && currentRef.moveCount > gameState.moveCount) {
-        setGameState(currentRef);
-      }
-    };
-    gameAreaController.addListener('gameUpdated', stateListener);
-    gameAreaController.addListener('gameEnd', stateListener);
-    return () => {
-      gameAreaController.removeListener('gameEnd', stateListener);
-      gameAreaController.removeListener('gameUpdated', stateListener);
-    };
-  }, [gameAreaController, gameState]);
+  const [currentShip, setCurrenShip] = useState('      ');
+
   /** Winner */
   useEffect(() => {
     if (gameState.status === 'OVER' && !gameState.winner) {
@@ -86,35 +78,109 @@ function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): 
     });
   }, [winDescription, gameState, townController.ourPlayer, winToast]);
   /** Observers List*/
+
   const observersList = gameAreaController.observers.map(Observer => (
-    <li key={Observer.id}> {Observer.userName} </li>
+    <li
+      key={Observer.id}
+      style={{
+        color: '#000000', // Dark text color for readability
+
+        padding: '10px 20px', // Padding for space inside the item
+
+        listStyleType: 'none', // Remove the default list bullet
+        textAlign: 'center', // Center-align the text
+        fontSize: '1rem', // Font size (adjust as needed)
+        fontWeight: 'bold', // Font weight for emphasis
+      }}>
+      {Observer.userName}
+    </li>
   ));
-  /** Join Game Button */
-  if (gameAreaController.status === 'WAITING_TO_START' || gameAreaController.status === 'OVER') {
-    joinButton = <button onClick={() => gameAreaController.joinGame()}>JoinGame</button>;
+  // State variable to trigger component refresh
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
+  // Modified function to handle the join game process
+  const handleJoinGame = async () => {
+    try {
+      await gameAreaController.joinGame();
+      setRefreshFlag(prev => !prev); // Toggle the flag to refresh the component
+    } catch (error) {
+      winToast({ 
+        description: 'Error on joining',
+        status: 'error',
+      });
+    }
+  };
+
+  useEffect(() => {
+    const stateListener = () => {
+      const currentRef = ref.current;
+      if (currentRef !== undefined) {
+        setGameState(currentRef);
+        setRefreshFlag(prev => !prev);
+      }
+    };
+    gameAreaController.addListener('gameUpdated', stateListener);
+    gameAreaController.addListener('gameEnd', stateListener);
+    return () => {
+      gameAreaController.removeListener('gameEnd', stateListener);
+      gameAreaController.removeListener('gameUpdated', stateListener);
+    };
+  }, [gameAreaController, gameState, refreshFlag]);
+  /** Winner */ // Include refreshFlag as a dependency
+
+  if (
+    gameAreaController.status === 'WAITING_TO_START' ||
+    gameAreaController.status === 'OVER' ||
+    gameAreaController.players.length < 2
+  ) {
+    joinButton = (
+      <Button
+        onClick={handleJoinGame}
+        colorScheme='green'
+        size='md'
+        boxShadow='0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06)'
+        _hover={{
+          bg: 'green.500',
+          boxShadow: '0px 5px 10px -1px rgba(0, 0, 0, 0.3)',
+        }}
+        _active={{
+          bg: 'green.600',
+          transform: 'scale(0.98)',
+          borderColor: 'green.700',
+        }}>
+        Join Game
+      </Button>
+    );
   }
+  /**Display Ship */
+  useEffect(() => {
+    const ship = (controller: BattleShipAreaController) => {
+      setCurrenShip(controller.Ship);
+    };
+    ship(gameAreaController);
+  }, [gameAreaController, refreshFlag]);
   /** Player List */
   useEffect(() => {
-    const determinePlayers = (controller: TicTacToeAreaController) => {
+    const determinePlayers = (controller: BattleShipAreaController) => {
       if (controller.x && controller.o) {
         setPlayerX(controller.x.userName);
         setPlayerO(controller.o.userName);
       } else if (controller.x && !controller.o) {
         setPlayerX(controller.x.userName);
-        setPlayerO('(No player yet!)');
+        setPlayerO('is not in game');
       } else if (!controller.x && controller.o) {
-        setPlayerX('(No player yet!)');
+        setPlayerX('is not in game');
         setPlayerO(controller.o.userName);
       } else {
-        setPlayerX('(No player yet!)');
-        setPlayerO('(No player yet!)');
+        setPlayerX('is not in game');
+        setPlayerO('is not in game');
       }
     };
     determinePlayers(gameState);
-  }, [gameAreaController, gameState, playerO, playerX]);
+  }, [gameAreaController, gameState, playerO, playerX, refreshFlag]);
   /** Game status */
   useEffect(() => {
-    const determineStatusMsg = (controller: TicTacToeAreaController) => {
+    const determineStatusMsg = (controller: BattleShipAreaController) => {
       if (controller.status === 'WAITING_TO_START') {
         setStatusMsg('Game not yet started.');
       } else if (
@@ -134,18 +200,67 @@ function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): 
       }
     };
     determineStatusMsg(gameState);
-  }, [gameAreaController, townController.ourPlayer, statusMsg, gameState]);
+  }, [gameAreaController, townController.ourPlayer, statusMsg, gameState, refreshFlag]);
   // TODO - implement this component
   return (
     <>
       <Leaderboard results={gameState.history} />
-      <TicTacToeBoard gameAreaController={gameState} />
-      <h1>{statusMsg}</h1>
+      <div>{currentShip}</div>
+      <BattleShipBoard gameAreaController={gameState} />
+
+      <h1
+        style={{
+          textAlign: 'center',
+          color: '#4299e1', // blue
+          margin: '0', // Remove default margin
+          padding: '20px', // Add some padding
+          fontSize: '2rem', // Increase font size
+          fontWeight: 'bold', // Make the font bold
+          fontFamily: 'Arial, sans-serif', // Set a specific font (optional)
+          textShadow: '2px 2px 4px rgba(0,0,0,0.2)', // Optional: Add a subtle text shadow for depth
+        }}>
+        {statusMsg}
+      </h1>
+
       {joinButton}
+      <p
+        style={{
+          color: '#000000', // Dark orange text
+          padding: '10px 20px', // Padding for spacing
+          margin: '2px 0', // Margin for spacing between list items
+
+          textAlign: 'center', // Center-align the text
+          listStyleType: 'none', // Remove the default list bullet
+        }}>
+        Observers:
+      </p>
       <ul aria-label='list of observers in the game'>{observersList}</ul>
       <ul aria-label='list of players in the game'>
-        <li key={'x'}> {'X: ' + playerX}</li>
-        <li key={'o'}> {'O: ' + playerO}</li>
+        <li
+          key={'x'}
+          style={{
+            color: '#FF8C00', // Dark orange text
+            padding: '10px 20px', // Padding for spacing
+            margin: '2px 0', // Margin for spacing between list items
+
+            textAlign: 'left', // Center-align the text
+            listStyleType: 'none', // Remove the default list bullet
+          }}>
+          {'Player 1 ' + playerX}
+        </li>
+
+        <li
+          key={'o'} // Updated key for uniqueness
+          style={{
+            color: '#FF8C00', // Dark orange text
+            padding: '10px 20px', // Padding for spacing
+            margin: '2px 0', // Margin for spacing between list items
+
+            textAlign: 'left', // Center-align the text
+            listStyleType: 'none', // Remove the default list bullet
+          }}>
+          {'Player 2 ' + playerO}
+        </li>
       </ul>
     </>
   );
@@ -169,17 +284,20 @@ export default function TicTacToeAreaWrapper(): JSX.Element {
     }
   }, [townController, gameArea]);
 
-  if (gameArea && gameArea.getData('type') === 'TicTacToe') {
+  if (gameArea && gameArea.getData('type') === 'BattleShip') {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{gameArea.name}</ModalHeader>
+        <ModalContent style={{ textAlign: 'center', color: 'green', fontSize: '16px' }}>
+          <ModalHeader style={{ textAlign: 'center', color: 'darkblue', fontSize: '50px' }}>
+            {gameArea.name}
+          </ModalHeader>
           <ModalCloseButton />
-          <TicTacToeArea interactableID={gameArea.name} />;
+          <BattleShipArea interactableID={gameArea.name} />
         </ModalContent>
       </Modal>
     );
   }
+
   return <></>;
 }

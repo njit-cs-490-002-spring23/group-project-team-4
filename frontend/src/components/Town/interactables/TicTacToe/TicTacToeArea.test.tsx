@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 import { act } from 'react-dom/test-utils';
 import TicTacToeAreaController, {
   TicTacToeCell,
-} from '../../../../classes/interactable/TicTacToeAreaController';
+} from '../../../../classes/interactable/BattleShipAreaController';
 import PlayerController from '../../../../classes/PlayerController';
 import TownController, * as TownControllerHooks from '../../../../classes/TownController';
 import TownControllerContext from '../../../../contexts/TownControllerContext';

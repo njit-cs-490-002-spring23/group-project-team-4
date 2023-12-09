@@ -1,73 +1,124 @@
-import { Button, chakra, Container } from '@chakra-ui/react';
-import React from 'react';
-import TicTacToeAreaController from '../../../../classes/interactable/TicTacToeAreaController';
+import { Button, chakra, Container, Grid } from '@chakra-ui/react';
+import React, { useState, useEffect, useRef } from 'react';
+import BattleShipAreaController, { BattleShipCell, BattleShipCell } from '../../../../classes/interactable/BattleShipAreaController';
+import { BattleShipGridPosition } from '../../../../types/CoveyTownSocket';
 
-export type TicTacToeGameProps = {
-  gameAreaController: TicTacToeAreaController;
+export type BattleShipGameProps = {
+  gameAreaController: BattleShipAreaController;
 };
 
-/**
- * A component that will render a single cell in the TicTacToe board, styled
- */
-const StyledTicTacToeSquare = chakra(Button, {
+const StyledBattleShipSquare = chakra(Button, {
   baseStyle: {
     justifyContent: 'center',
     alignItems: 'center',
-    flexBasis: '33%',
-    border: '1px solid black',
-    height: '33%',
-    fontSize: '50px',
+    flexBasis: '10%',
+    width: '10%', // Each square now takes up 10% of the grid space
+    height: '90%',
+    border: '3px solid #2b6cb0', // Changed to a complementary blue border color
+    backgroundColor: '#4299e1', // Nice shade of blue for the background
+    color: 'white', // White text color for better readability
+    fontSize: '20px', // Adjust font size for smaller cells
     _disabled: {
+      backgroundColor: '#bee3f8', // Lighter blue when disabled
+      color: 'black', // Change text color for disabled state
       opacity: '100%',
     },
-  },
-});
-/**
- * A component that will render the TicTacToe board, styled
- */
-const StyledTicTacToeBoard = chakra(Container, {
-  baseStyle: {
-    display: 'flex',
-    width: '400px',
-    height: '400px',
-    padding: '5px',
-    flexWrap: 'wrap',
+    _hover: {
+      backgroundColor: '#3182ce', // Slightly darker blue on hover
+    },
+    _active: {
+      backgroundColor: '#2b6cb0', // Even darker blue when active
+    },
   },
 });
 
 /**
- * A component that renders the TicTacToe board
- *
- * Renders the TicTacToe board as a "StyledTicTacToeBoard", which consists of 9 "StyledTicTacToeSquare"s
- * (one for each cell in the board, starting from the top left and going left to right, top to bottom).
- * Each StyledTicTacToeSquare has an aria-label property that describes the cell's position in the board,
- * formatted as `Cell ${rowIndex},${colIndex}`.
- *
- * The board is re-rendered whenever the board changes, and each cell is re-rendered whenever the value
- * of that cell changes.
- *
- * If the current player is in the game, then each StyledTicTacToeSquare is clickable, and clicking
- * on it will make a move in that cell. If there is an error making the move, then a toast will be
- * displayed with the error message as the description of the toast. If it is not the current player's
- * turn, then the StyledTicTacToeSquare will be disabled.
- *
- * @param gameAreaController the controller for the TicTacToe game
+ * A component that will render the Battleship board, styled
  */
-export default function TicTacToeBoard({ gameAreaController }: TicTacToeGameProps): JSX.Element {
-  //TODO - implement this component (delete what's here first)
+const StyledBattleShipBoard = chakra(Container, {
+  baseStyle: {
+    display: 'grid',
+    backgroundColor: '#B3DFFC', // Nice shade of blue for the background
+    gridTemplateColumns: 'repeat(10, 1fr)', // 10 columns for the 10x10 grid
+    gridTemplateRows: 'repeat(10, 1fr)', // Also define the rows explicitly for a 10x10 grid
+    gap: 0,
+    width: '450px',
+    height: '500px',
+    padding: '5px',
+    border: '3px solid black', // Add a border around the entire board
+    borderRadius: '10px', // Optionally, add rounded corners
+    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)', // Optional: add a shadow for a 3D effect
+    // Remove flexWrap, not needed for grid
+  },
+});
+
+/**
+ * A component that renders the Battleship board
+ */
+export default function BattleShipBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
+  const [board, setBoard] = useState(gameAreaController.board);
+
+  useEffect(() => {
+    const handleBoardChange = () => {
+      setBoard(gameAreaController.board);
+    };
+
+    gameAreaController.addListener('boardChanged', handleBoardChange);
+
+    return () => {
+      gameAreaController.removeListener('boardChanged', handleBoardChange);
+    };
+  }, [gameAreaController]);
+  const makeBattleShipMove = async (row: BattleShipGridPosition, col: BattleShipGridPosition) => {
+    try {
+      await gameAreaController.makeMove(row, col, gameAreaController.Ship);
+    } catch (error) {}
+  };
+
+  const renderSquare = (rowIndex: BattleShipGridPosition, colIndex: BattleShipGridPosition) => {
+    const cellValue: BattleShipCell = board[rowIndex][colIndex];
+
+    // Custom styling or text based on the cell value
+    let displayValue = cellValue;
+    if (
+      cellValue === 'C' ||
+      cellValue === 'B' ||
+      cellValue === 'S' ||
+      cellValue === 'R' ||
+      cellValue === 'D'
+    ) {
+      // If the cell is a ship, display ship symbol or custom styling
+      displayValue = cellValue;
+    } else if (cellValue === 1) {
+      // If the cell is hit, display a hit symbol or style
+      displayValue = 'H'; // Example symbol for hit
+    } else if (cellValue === 2) {
+      // If the cell is a miss, display a miss symbol or style
+      displayValue = 'H'; // Example symbol for miss
+    }
+    // Other cases like '0' or undefined can be handled as needed
+
+    return (
+      <StyledBattleShipSquare
+        key={`${rowIndex}-${colIndex}`}
+        aria-label={`Cell ${rowIndex},${colIndex}`}
+        onClick={() => makeBattleShipMove(rowIndex, colIndex)}>
+        {displayValue}
+      </StyledBattleShipSquare>
+    );
+  };
+
+  const renderRows = () => {
+    const rows = [];
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        rows.push(renderSquare(i, j));
+      }
+    }
+    return rows;
+  };
+
   return (
-    <StyledTicTacToeBoard aria-label='Tic-Tac-Toe Board'>
-      <StyledTicTacToeSquare aria-label='Cell 0,0'>
-        {gameAreaController.board[0][0]}
-      </StyledTicTacToeSquare>
-      <StyledTicTacToeSquare aria-label='Cell 0,1'></StyledTicTacToeSquare>
-      <StyledTicTacToeSquare aria-label='Cell 0,2'></StyledTicTacToeSquare>
-      <StyledTicTacToeSquare aria-label='Cell 1,0'></StyledTicTacToeSquare>
-      <StyledTicTacToeSquare aria-label='Cell 1,1'></StyledTicTacToeSquare>
-      <StyledTicTacToeSquare aria-label='Cell 1,2'></StyledTicTacToeSquare>
-      <StyledTicTacToeSquare aria-label='Cell 2,0'></StyledTicTacToeSquare>
-      <StyledTicTacToeSquare aria-label='Cell 2,1'></StyledTicTacToeSquare>
-      <StyledTicTacToeSquare aria-label='Cell 2,2'></StyledTicTacToeSquare>
-    </StyledTicTacToeBoard>
+    <StyledBattleShipBoard aria-label='Battleship Board'>{renderRows()}</StyledBattleShipBoard>
   );
-}
+  }
