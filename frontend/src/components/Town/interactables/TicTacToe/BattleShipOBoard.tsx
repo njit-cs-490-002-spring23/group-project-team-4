@@ -58,12 +58,12 @@ const StyledBattleShipBoard = chakra(Container, {
 /**
  * A component that renders the Battleship board
  */
-export default function BattleShipXBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
-  const [board, setBoard] = useState(gameAreaController.xBoard);
+export default function BattleShipOBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
+  const [board, setBoard] = useState(gameAreaController.oBoard);
 
   useEffect(() => {
     const handleBoardChange = () => {
-      setBoard(gameAreaController.xBoard);
+      setBoard(gameAreaController.oBoard);
     };
 
     gameAreaController.addListener('boardChanged', handleBoardChange);
@@ -108,6 +108,6 @@ export default function BattleShipXBoard({ gameAreaController }: BattleShipGameP
   };
 
   return (
-    <StyledBattleShipBoard aria-label='Battleship X Board'>{renderRows()}</StyledBattleShipBoard>
+    <StyledBattleShipBoard aria-label='Battleship O Board'>{renderRows()}</StyledBattleShipBoard>
   );
 }

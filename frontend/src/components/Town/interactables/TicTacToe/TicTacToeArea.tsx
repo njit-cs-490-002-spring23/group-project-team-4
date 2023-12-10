@@ -16,6 +16,11 @@ import GameAreaInteractable from '../GameArea';
 import Leaderboard from '../Leaderboard';
 import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
 import BattleShipBoard from './TicTacToeBoard';
+import BattleShipDefaultBoard from './BattleShipDefaultBoard';
+import BattleShipXGuessBoard from './BattleShipXGuess';
+import BattleShipXBoard from './TicTacToeBoard';
+import BattleShipOGuessBoard from './BattleShipOGuess';
+import BattleShipOBoard from './BattleShipOBoard';
 
 /**
  * The TicTacToeArea component renders the TicTacToe game area.
@@ -62,7 +67,9 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
   const [statusMsg, setStatusMsg] = useState('');
   const [playerO, setPlayerO] = useState('  ');
   const [playerX, setPlayerX] = useState('   ');
-
+  const [currentShip, setCurrentShip] = useState('      ');
+  // State variable to trigger component refresh
+  const [refreshFlag, setRefreshFlag] = useState(false);
   /** Winner */
   useEffect(() => {
     if (gameState.status === 'OVER' && !gameState.winner) {
@@ -72,10 +79,13 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
     } else if (gameState.status === 'OVER') {
       setWinDescription('You lost :(');
     }
-    winToast({
-      description: winDescription,
-    });
-  }, [winDescription, gameState, townController.ourPlayer, winToast]);
+    // Display win toast only when the game is not in progress
+    if (gameState.status === 'OVER') {
+      winToast({
+        description: winDescription,
+      });
+    }
+  }, [winDescription, gameState, townController.ourPlayer, winToast, refreshFlag]);
   /** Observers List*/
 
   const observersList = gameAreaController.observers.map(Observer => (
@@ -94,8 +104,6 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
       {Observer.userName}
     </li>
   ));
-  // State variable to trigger component refresh
-  const [refreshFlag, setRefreshFlag] = useState(false);
 
   // Modified function to handle the join game process
   const handleJoinGame = async () => {
@@ -109,26 +117,23 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
       });
     }
   };
-  useEffect(() => {
-    // Fetch or update game state based on the refreshFlag
-    // This effect will run when the component mounts and whenever refreshFlag changes
-    // Add necessary logic to update the game state or other relevant data
 
+  useEffect(() => {
     const stateListener = () => {
       const currentRef = ref.current;
-      if (currentRef !== undefined && currentRef.moveCount > gameState.moveCount) {
+      if (currentRef !== undefined) {
         setGameState(currentRef);
+        setRefreshFlag(prev => !prev);
       }
     };
-
     gameAreaController.addListener('gameUpdated', stateListener);
     gameAreaController.addListener('gameEnd', stateListener);
-
     return () => {
       gameAreaController.removeListener('gameEnd', stateListener);
       gameAreaController.removeListener('gameUpdated', stateListener);
     };
-  }, [gameAreaController, gameState, refreshFlag]); // Include refreshFlag as a dependency
+  }, [gameAreaController, gameState, refreshFlag]);
+  /** Winner */ // Include refreshFlag as a dependency
 
   if (
     gameAreaController.status === 'WAITING_TO_START' ||
@@ -154,7 +159,61 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
       </Button>
     );
   }
+  /**Display Ship */
+  useEffect(() => {
+    const ship = (controller: BattleShipAreaController) => {
+      setCurrentShip(controller.Ship);
+    };
+    ship(gameAreaController);
+  }, [gameAreaController, refreshFlag]);
 
+  /** Determine Board to Display */
+  const [currentBoard, setCurrentBoard] = useState(
+    <BattleShipDefaultBoard gameAreaController={gameState} />,
+  );
+  const board = useCallback(
+    (controller: BattleShipAreaController) => {
+      if (controller.status === 'IN_PROGRESS') {
+        if (townController.ourPlayer === controller.x && controller.Ship !== 'guess') {
+          setCurrentBoard(<BattleShipXBoard gameAreaController={controller} />);
+        } else if (townController.ourPlayer === controller.o && controller.Ship !== 'guess') {
+          setCurrentBoard(<BattleShipOBoard gameAreaController={controller} />);
+        }
+        if (
+          townController.ourPlayer === controller.x &&
+          controller.whoseTurn === controller.x &&
+          controller.Ship === 'guess'
+        ) {
+          setCurrentBoard(<BattleShipXGuessBoard gameAreaController={controller} />);
+        } else if (
+          townController.ourPlayer === controller.x &&
+          controller.whoseTurn === controller.o &&
+          controller.Ship === 'guess'
+        ) {
+          setCurrentBoard(<BattleShipXBoard gameAreaController={controller} />);
+        }
+        if (
+          townController.ourPlayer === controller.o &&
+          controller.whoseTurn === gameAreaController.o &&
+          controller.Ship === 'guess'
+        ) {
+          setCurrentBoard(<BattleShipOGuessBoard gameAreaController={controller} />);
+        } else if (
+          townController.ourPlayer === controller.o &&
+          controller.whoseTurn === controller.x &&
+          controller.Ship === 'guess'
+        ) {
+          setCurrentBoard(<BattleShipOBoard gameAreaController={controller} />);
+        }
+      } else {
+        setCurrentBoard(<BattleShipDefaultBoard gameAreaController={controller} />);
+      }
+    },
+    [gameAreaController, townController.ourPlayer],
+  );
+  useEffect(() => {
+    board(gameState);
+  }, [gameAreaController, gameState, townController.ourPlayer, refreshFlag, board]);
   /** Player List */
   useEffect(() => {
     const determinePlayers = (controller: BattleShipAreaController) => {
@@ -201,12 +260,13 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
   return (
     <>
       <Leaderboard results={gameState.history} />
-      <BattleShipBoard gameAreaController={gameState} />
+      <div>{currentShip}</div>
+      {currentBoard}
 
       <h1
         style={{
           textAlign: 'center',
-          color: '#4299e1', // Example: Nice shade of blue
+          color: '#4299e1', // blue
           margin: '0', // Remove default margin
           padding: '20px', // Add some padding
           fontSize: '2rem', // Increase font size

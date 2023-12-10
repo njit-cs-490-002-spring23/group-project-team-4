@@ -99,7 +99,7 @@ export interface GameMove<MoveType> {
 
 export type BattleShipGridPosition = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
-export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'destroyer';
+export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'destroyer' | 'guess';
 
 
 /**
@@ -129,7 +129,7 @@ export interface BattleShipGameState extends WinnableGameState {
   o_board: ReadOnlyArray<BattleShipMove>;
   x_ships: ReadonlyArray<BattleShip>;
   o_ships: ReadonlyArray<BattleShip>;
-  turn: 'X' | 'O' | undefined;
+  turn: 'X' | 'O';
 }
 
 export type InteractableID = string;
