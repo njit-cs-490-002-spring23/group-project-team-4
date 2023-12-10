@@ -40,11 +40,12 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     } else {
       board = this.state.o_board;
     }
-    for (const placement of board) {
-      if (placement.row === move.move.row && placement.col === move.move.col) {
+    for (let i = 0; i < board.length; i += 1) {
+      if (board[i].row === move.move.row && board[i].col === move.move.col) {
         return true;
       }
     }
+
     return false;
   }
 
@@ -71,15 +72,12 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     let hitCountX = 0;
     const board = this.state.x_board;
     for (const move of this.state.moves) {
-      if (move.player === 'O') {
-        if (
-          board.some(
-            (position: BattleShipGridPosition) => position === move.row && position === move.col,
-          )
-        ) {
-          hitCountX++;
+      for (let i = 0; i < board.length; i += 1)
+        if (move.player === 'O') {
+          if (move.row === board[i].row && move.col === board[i].col) {
+            hitCountX++;
+          }
         }
-      }
     }
     return hitCountX;
   }
@@ -88,15 +86,12 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     let hitCountO = 0;
     const board = this.state.x_board;
     for (const move of this.state.moves) {
-      if (move.player === 'X') {
-        if (
-          board.some(
-            (position: BattleShipGridPosition) => position === move.row && position === move.col,
-          )
-        ) {
-          hitCountO++;
+      for (let i = 0; i < board.length; i += 1)
+        if (move.player === 'X') {
+          if (move.row === board[i].row && move.col === board[i].col) {
+            hitCountO++;
+          }
         }
-      }
     }
     return hitCountO;
   }
@@ -150,27 +145,27 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       }
     switch (move.move.shiptype) {
       case 'carrier':
-        if (move.move.row > 4) {
+        if (move.move.col > 4) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
       case 'battleship':
-        if (move.move.row > 5) {
+        if (move.move.col > 5) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
       case 'criuser':
-        if (move.move.row > 6) {
+        if (move.move.col > 6) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
       case 'submarine':
-        if (move.move.row > 6) {
+        if (move.move.col > 6) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
       case 'destroyer':
-        if (move.move.row > 7) {
+        if (move.move.col > 7) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
@@ -211,15 +206,15 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
             break;
         }
         for (let i = 1; i < maxIndex; i += 1) {
-          const column = <BattleShipGridPosition>(move.move.col + i);
+          const colnum = move.move.col + i;
+          const column = <BattleShipGridPosition>colnum;
           impliedMove = {
             row: move.move.row,
             col: column,
             shiptype: move.move.shiptype,
             player: move.move.player,
           };
-          move.move = impliedMove;
-          this.state.x_board = this.state.x_board.concat(move.move);
+          this.state.x_board = this.state.x_board.concat(impliedMove);
         }
       } else {
         this.state.o_ships = this.state.o_ships.filter(ship => ship !== move.move.shiptype);
@@ -245,15 +240,15 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
             break;
         }
         for (let i = 1; i < maxIndex; i += 1) {
-          const column = <BattleShipGridPosition>(move.move.col + i);
+          const colnum = move.move.col + i;
+          const column = <BattleShipGridPosition>colnum;
           impliedMove = {
             row: move.move.row,
             col: column,
             shiptype: move.move.shiptype,
             player: move.move.player,
           };
-          move.move = impliedMove;
-          this.state.x_board = this.state.x_board.concat(move.move);
+          this.state.o_board = this.state.o_board.concat(impliedMove);
         }
       }
     } else {
@@ -265,7 +260,6 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       this.state.moves = this.state.moves.concat(move.move);
       this._checkForGameEnding();
     }
-
   }
 
   protected _join(player: Player): void {
