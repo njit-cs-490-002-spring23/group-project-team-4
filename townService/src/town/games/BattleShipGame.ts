@@ -64,7 +64,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
 
     if (xHits >= 17 || oHits >= 17) {
       this.state.status = 'OVER';
-      this.state.winner = oHits >= 17 ? 'X' : 'O';
+      this.state.winner = oHits >= 17 ? this.state.x : this.state.o;
     }
   }
 

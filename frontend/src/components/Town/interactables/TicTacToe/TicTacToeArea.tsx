@@ -68,7 +68,8 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
   const [playerO, setPlayerO] = useState('  ');
   const [playerX, setPlayerX] = useState('   ');
   const [currentShip, setCurrentShip] = useState('      ');
-
+  // State variable to trigger component refresh
+  const [refreshFlag, setRefreshFlag] = useState(false);
   /** Winner */
   useEffect(() => {
     if (gameState.status === 'OVER' && !gameState.winner) {
@@ -78,10 +79,13 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
     } else if (gameState.status === 'OVER') {
       setWinDescription('You lost :(');
     }
-    winToast({
-      description: winDescription,
-    });
-  }, [winDescription, gameState, townController.ourPlayer, winToast]);
+    // Display win toast only when the game is not in progress
+    if (gameState.status === 'OVER') {
+      winToast({
+        description: winDescription,
+      });
+    }
+  }, [winDescription, gameState, townController.ourPlayer, winToast, refreshFlag]);
   /** Observers List*/
 
   const observersList = gameAreaController.observers.map(Observer => (
@@ -100,8 +104,6 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
       {Observer.userName}
     </li>
   ));
-  // State variable to trigger component refresh
-  const [refreshFlag, setRefreshFlag] = useState(false);
 
   // Modified function to handle the join game process
   const handleJoinGame = async () => {
@@ -177,22 +179,29 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
         } else if (townController.ourPlayer === controller.o && controller.Ship !== 'guess') {
           setCurrentBoard(<BattleShipOBoard gameAreaController={controller} />);
         }
-        if (townController.ourPlayer === controller.x && controller.whoseTurn === controller.x) {
+        if (
+          townController.ourPlayer === controller.x &&
+          controller.whoseTurn === controller.x &&
+          controller.Ship === 'guess'
+        ) {
           setCurrentBoard(<BattleShipXGuessBoard gameAreaController={controller} />);
         } else if (
           townController.ourPlayer === controller.x &&
-          controller.whoseTurn === controller.o
+          controller.whoseTurn === controller.o &&
+          controller.Ship === 'guess'
         ) {
           setCurrentBoard(<BattleShipXBoard gameAreaController={controller} />);
         }
         if (
           townController.ourPlayer === controller.o &&
-          controller.whoseTurn === gameAreaController.o
+          controller.whoseTurn === gameAreaController.o &&
+          controller.Ship === 'guess'
         ) {
           setCurrentBoard(<BattleShipOGuessBoard gameAreaController={controller} />);
         } else if (
           townController.ourPlayer === controller.o &&
-          controller.whoseTurn === controller.x
+          controller.whoseTurn === controller.x &&
+          controller.Ship === 'guess'
         ) {
           setCurrentBoard(<BattleShipOBoard gameAreaController={controller} />);
         }

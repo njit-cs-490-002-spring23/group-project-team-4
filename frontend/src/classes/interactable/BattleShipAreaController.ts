@@ -317,10 +317,13 @@ export default class BattleShipAreaController extends GameAreaController<
     }
     if (newMoveCount && newMoveCount > this.moveCount) {
       let newBoard;
+      let updatedBoard;
       if (this._townController.ourPlayer === this.x) {
         newBoard = this.xGuessBoard;
+        updatedBoard = this.oBoard;
       } else {
         newBoard = this.oGuessBoard;
+        updatedBoard = this.xBoard;
       }
       if (newBoard === this.xGuessBoard) {
         for (let newMove = 0; newMove < newMoveCount; newMove += 1) {
@@ -335,7 +338,7 @@ export default class BattleShipAreaController extends GameAreaController<
             // if the value at row and col is 0, then change it to 3 to indicate that it is a miss
             if (this.oBoard[row][col] === 0) {
               newBoard[row][col] = 'M';
-              this.xBoard[row][col] = 'M';
+              updatedBoard[row][col] = 'M';
             } else if (
               this.oBoard[row][col] === 'C' ||
               this.oBoard[row][col] === 'B' ||
@@ -345,7 +348,7 @@ export default class BattleShipAreaController extends GameAreaController<
             ) {
               // if the value at row and col is 1, then change it to 2 to indicate that it is a hit
               newBoard[row][col] = 'H';
-              this.oBoard[row][col] = 'H';
+              updatedBoard[row][col] = 'H';
             }
           }
         }
@@ -362,7 +365,7 @@ export default class BattleShipAreaController extends GameAreaController<
             // if the value at row and col is 0, then change it to 3 to indicate that it is a miss
             if (this.xBoard[row][col] === 0) {
               newBoard[row][col] = 'M';
-              this.xBoard[row][col] = 'M';
+              updatedBoard[row][col] = 'M';
             } else if (
               this.xBoard[row][col] === 'C' ||
               this.xBoard[row][col] === 'B' ||
@@ -372,13 +375,14 @@ export default class BattleShipAreaController extends GameAreaController<
             ) {
               // if the value at row and col is 1, then change it to 2 to indicate that it is a hit
               newBoard[row][col] = 'H';
-              this.xBoard[row][col] = 'H';
+              updatedBoard[row][col] = 'H';
             }
           }
         }
       }
 
       this.emit('boardChanged', newBoard);
+      this.emit('boardChanged', updatedBoard);
       if (newModel.game?.state.turn !== this.whoseTurn) {
         this.emit('turnChanged', true);
       } else {
