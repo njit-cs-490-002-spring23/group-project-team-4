@@ -14,7 +14,6 @@ import {
   BattleShipGridPosition,
 } from '../../types/CoveyTownSocket';
 import Game from './Game';
-import { GameState } from '../../types/CoveyTownSocket';
 
 /**
  * A BattleshipGame is a Game that implements the rules of Battleship.
@@ -24,36 +23,15 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
   public constructor() {
     super({
       moves: [],
-      x_board: undefined,
-      o_board: undefined,
-      x_ships: ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'],
-      o_ships: ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'],
+      x_board: [],
+      o_board: [],
+      x_ships: ['carrier', 'battleship', 'criuser', 'submarine', 'destroyer'],
+      o_ships: ['carrier', 'battleship', 'criuser', 'submarine', 'destroyer'],
       status: 'WAITING_TO_START',
-      turn: undefined,
+      turn: 'X',
     });
   }
 
-  /*
-  private get _board() {
-    const { moves } = this.state;
-    const board = [
-      
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ];
-    for (const move of moves) {
-      board[move.row][move.col] = 1;
-    }
-    return board;
-  } */
   private _isHit(move: GameMove<BattleShipMove>): boolean {
     // to check if a ship is hit
     let board;
@@ -62,11 +40,12 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     } else {
       board = this.state.o_board;
     }
-    for (const placement of board) {
-      if (placement.row === move.move.row && placement.col === move.move.col) {
+    for (let i = 0; i < board.length; i += 1) {
+      if (board[i].row === move.move.row && board[i].col === move.move.col) {
         return true;
       }
     }
+
     return false;
   }
 
@@ -85,7 +64,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
 
     if (xHits >= 17 || oHits >= 17) {
       this.state.status = 'OVER';
-      this.state.winner = oHits >= 17 ? 'X' : 'O';
+      this.state.winner = oHits >= 17 ? this.state.x : this.state.o;
     }
   }
 
@@ -93,15 +72,12 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     let hitCountX = 0;
     const board = this.state.x_board;
     for (const move of this.state.moves) {
-      if (move.player === 'O') {
-        if (
-          board.some(
-            (position: BattleShipGridPosition) => position === move.row && position === move.col,
-          )
-        ) {
-          hitCountX++;
+      for (let i = 0; i < board.length; i += 1)
+        if (move.player === 'O') {
+          if (move.row === board[i].row && move.col === board[i].col) {
+            hitCountX++;
+          }
         }
-      }
     }
     return hitCountX;
   }
@@ -110,15 +86,12 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     let hitCountO = 0;
     const board = this.state.x_board;
     for (const move of this.state.moves) {
-      if (move.player === 'X') {
-        if (
-          board.some(
-            (position: BattleShipGridPosition) => position === move.row && position === move.col,
-          )
-        ) {
-          hitCountO++;
+      for (let i = 0; i < board.length; i += 1)
+        if (move.player === 'X') {
+          if (move.row === board[i].row && move.col === board[i].col) {
+            hitCountO++;
+          }
         }
-      }
     }
     return hitCountO;
   }
@@ -128,7 +101,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     // - Check if it's the player's turn
     // - Check if the move is within the bounds of the board
     // - Check if the game is in progress
-    if (this.state.status !== 'GUESSING') {
+    if (this.state.status !== 'IN_PROGRESS') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
     /** check these */
@@ -160,9 +133,9 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
     }
     let board;
-    if (this.state.turn === 'X') {
+    if (move.move.player === 'X') {
       board = this.state.x_board;
-    } else if (this.state.turn === 'O') {
+    } else if (move.move.player === 'O') {
       board = this.state.o_board;
     }
     /* check this */
@@ -171,28 +144,28 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
         throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
       }
     switch (move.move.shiptype) {
-      case 'battleship':
-        if (move.move.row > 5) {
+      case 'carrier':
+        if (move.move.col > 4) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
-      case 'carrier':
-        if (move.move.row > 6) {
+      case 'battleship':
+        if (move.move.col > 5) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
       case 'criuser':
-        if (move.move.row > 7) {
-          throw new InvalidParametersError('Index out of bounds');
-        }
-        break;
-      case 'destroyer':
-        if (move.move.row > 7) {
+        if (move.move.col > 6) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
       case 'submarine':
-        if (move.move.row > 8) {
+        if (move.move.col > 6) {
+          throw new InvalidParametersError('Index out of bounds');
+        }
+        break;
+      case 'destroyer':
+        if (move.move.col > 7) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
@@ -205,28 +178,27 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     /* * placement move
      */ if (this.state.status !== 'IN_PROGRESS') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
-    } else if (move.move.shiptype !== undefined) {
+    } else if (move.move.shiptype !== 'guess') {
       this._validatePlacementMove(move);
       let impliedMove;
       let maxIndex;
       if (move.move.player === 'X') {
-        
         this.state.x_ships = this.state.x_ships.filter(ship => ship !== move.move.shiptype);
         this.state.x_board = this.state.x_board.concat(move.move);
         switch (move.move.shiptype) {
-          case 'battleship':
+          case 'carrier':
             maxIndex = 5;
             break;
-          case 'carrier':
+          case 'battleship':
             maxIndex = 4;
             break;
           case 'criuser':
             maxIndex = 3;
             break;
-          case 'destroyer':
+          case 'submarine':
             maxIndex = 3;
             break;
-          case 'submarine':
+          case 'destroyer':
             maxIndex = 2;
             break;
           default:
@@ -234,34 +206,33 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
             break;
         }
         for (let i = 1; i < maxIndex; i += 1) {
-          const column = <BattleShipGridPosition>(move.move.col + i);
+          const colnum = move.move.col + i;
+          const column = <BattleShipGridPosition>colnum;
           impliedMove = {
             row: move.move.row,
             col: column,
             shiptype: move.move.shiptype,
             player: move.move.player,
           };
-          move.move = impliedMove;
-          this.state.x_board = this.state.x_board.concat(move.move);
+          this.state.x_board = this.state.x_board.concat(impliedMove);
         }
-       
       } else {
         this.state.o_ships = this.state.o_ships.filter(ship => ship !== move.move.shiptype);
         this.state.o_board = this.state.o_board.concat(move.move);
         switch (move.move.shiptype) {
-          case 'battleship':
+          case 'carrier':
             maxIndex = 5;
             break;
-          case 'carrier':
+          case 'battleship':
             maxIndex = 4;
             break;
           case 'criuser':
             maxIndex = 3;
             break;
-          case 'destroyer':
+          case 'submarine':
             maxIndex = 3;
             break;
-          case 'submarine':
+          case 'destroyer':
             maxIndex = 2;
             break;
           default:
@@ -269,23 +240,18 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
             break;
         }
         for (let i = 1; i < maxIndex; i += 1) {
-          const column = <BattleShipGridPosition>(move.move.col + i);
+          const colnum = move.move.col + i;
+          const column = <BattleShipGridPosition>colnum;
           impliedMove = {
             row: move.move.row,
             col: column,
             shiptype: move.move.shiptype,
             player: move.move.player,
           };
-          move.move = impliedMove;
-          this.state.x_board = this.state.x_board.concat(move.move);
+          this.state.o_board = this.state.o_board.concat(impliedMove);
         }
       }
-      // to check if all the ships have been placed 
-      
-
-     else {
-      // to check if the game is in te guessing phase 
-      
+    } else {
       /* * guess move */
       this._validateGuessMove(move);
       if (!this._isHit(move)) {
@@ -294,9 +260,6 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       this.state.moves = this.state.moves.concat(move.move);
       this._checkForGameEnding();
     }
-
-    // Validate the move
-    // Apply the move
   }
 
   protected _join(player: Player): void {
@@ -364,8 +327,4 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       };
     }
   }
-
-  // Additional methods for Battleship game logic (e.g., placing ships, handling turns, etc.)
 }
-
-// Define the BattleshipMove and BattleshipGameState types as appropriate

@@ -26,6 +26,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "stryker-prepare": "replace-in-file '/../../..//g' '../../../../../' src/types/CoveyTownSocket.d.ts --isRegex"
   },
+ 
   "keywords": [],
   "devDependencies": {
     "@stoplight/spectral-cli": "^6.4.1",
@@ -34,7 +35,7 @@
     "@stryker-mutator/typescript-checker": "^6.1.2",
     "@tsoa/runtime": "^4.1.0",
     "@types/cors": "^2.8.12",
-    "@types/jest": "^28.1.5",
+    "@types/jest": "^28.1.8",
     "@types/node": "^18.0.3",
     "@types/swagger-ui-express": "^4.1.3",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
@@ -53,7 +54,7 @@
     "prettier": "^2.7.1",
     "replace-in-file": "^6.3.5",
     "socket.io-client": "^4.5.1",
-    "ts-jest": "^28.0.5",
+    "ts-jest": "^28.0.8",
     "ts-node": "^10.8.2",
     "typescript": "^4.7.3"
   },
