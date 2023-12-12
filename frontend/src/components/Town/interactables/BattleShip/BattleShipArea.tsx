@@ -15,10 +15,10 @@ import { InteractableID } from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
 import Leaderboard from '../Leaderboard';
 import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
-import BattleShipBoard from './TicTacToeBoard';
+import BattleShipBoard from '.';
 import BattleShipDefaultBoard from './BattleShipDefaultBoard';
 import BattleShipXGuessBoard from './BattleShipXGuess';
-import BattleShipXBoard from './TicTacToeBoard';
+import BattleShipXBoard from './BattleShipXBoard';
 import BattleShipOGuessBoard from './BattleShipOGuess';
 import BattleShipOBoard from './BattleShipOBoard';
 

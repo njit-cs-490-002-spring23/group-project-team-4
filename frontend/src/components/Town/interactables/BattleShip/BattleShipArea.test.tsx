@@ -19,8 +19,8 @@ import {
 } from '../../../../types/CoveyTownSocket';
 import PhaserGameArea from '../GameArea';
 import * as Leaderboard from '../Leaderboard';
-import TicTacToeAreaWrapper from './TicTacToeArea';
-import * as TicTacToeBoard from './TicTacToeBoard';
+import TicTacToeAreaWrapper from './BattleShipArea';
+import * as TicTacToeBoard from '.';
 
 const mockToast = jest.fn();
 jest.mock('@chakra-ui/react', () => {
