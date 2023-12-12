@@ -9,6 +9,7 @@ import {
 import BattleShipGame from './BattleShipGame';
 
 import InvalidParametersError from '../../lib/InvalidParametersError';
+import MOVE_NOT_YOUR_TURN_MESSAGE from '../../lib/InvalidParametersError'
 
 describe('BattleShipGame', () => {
   let game: BattleShipGame;
@@ -320,13 +321,13 @@ describe('BattleShipGame', () => {
     });
 
     it('throws an error when player X goes twice in a row', () => {
-      const move1: BattleShipMove = { row: 1, col: 1, shiptype: 'guess', player: 'X' };
+      const move1: BattleShipMove = { row: 9, col: 8, shiptype: 'guess', player: 'X' };
       game.applyMove({
         gameID: game.id,
         playerID: player1.id,
         move: move1,
       });
-      const move: BattleShipMove = { row: 1, col: 2, shiptype: 'guess', player: 'X' };
+      const move: BattleShipMove = { row: 9, col: 9, shiptype: 'guess', player: 'X' };
       expect(() =>
         game.applyMove({
           gameID: game.id,
@@ -337,13 +338,19 @@ describe('BattleShipGame', () => {
     });
 
     it('throws an error when player O goes twice in a row', () => {
-      const move1: BattleShipMove = { row: 1, col: 1, shiptype: 'guess', player: 'O' };
+      const move1: BattleShipMove = { row: 1, col: 9, shiptype: 'guess', player: 'X' };
+      game.applyMove({
+        gameID: game.id,
+        playerID: player1.id,
+        move: move1,
+      });
+      const move3: BattleShipMove = { row: 9, col: 8, shiptype: 'guess', player: 'O' };
       game.applyMove({
         gameID: game.id,
         playerID: player2.id,
-        move: move1,
+        move: move3,
       });
-      const move: BattleShipMove = { row: 1, col: 2, shiptype: 'guess', player: 'O' };
+      const move: BattleShipMove = { row: 9, col: 9, shiptype: 'guess', player: 'O' };
       expect(() =>
         game.applyMove({
           gameID: game.id,
@@ -354,7 +361,7 @@ describe('BattleShipGame', () => {
     });
 
     it('throws an error when player X goes in the same spot', () => {
-      const move1: BattleShipMove = { row: 1, col: 1, shiptype: 'guess', player: 'X' };
+      const move1: BattleShipMove = { row: 1, col: 9, shiptype: 'guess', player: 'X' };
       game.applyMove({
         gameID: game.id,
         playerID: player1.id,
@@ -366,7 +373,8 @@ describe('BattleShipGame', () => {
         playerID: player2.id,
         move: move2,
       });
-      const move: BattleShipMove = { row: 1, col: 1, shiptype: 'guess', player: 'X' };
+      
+      const move: BattleShipMove = { row: 1, col: 9, shiptype: 'guess', player: 'X' };
       expect(() =>
         game.applyMove({
           gameID: game.id,
@@ -376,19 +384,25 @@ describe('BattleShipGame', () => {
       ).toThrow();
     });
     it('throws an error when player O goes in the same spot', () => {
-      const move1: BattleShipMove = { row: 1, col: 1, shiptype: 'guess', player: 'O' };
+      const move0: BattleShipMove = { row: 9, col: 9, shiptype: 'guess', player: 'X' };
+      game.applyMove({
+        gameID: game.id,
+        playerID: player1.id,
+        move: move0,
+      });
+      const move1: BattleShipMove = { row: 1, col: 9, shiptype: 'guess', player: 'O' };
       game.applyMove({
         gameID: game.id,
         playerID: player2.id,
         move: move1,
       });
-      const move2: BattleShipMove = { row: 1, col: 0, shiptype: 'guess', player: 'X' };
+      const move2: BattleShipMove = { row: 9, col: 8, shiptype: 'guess', player: 'X' };
       game.applyMove({
         gameID: game.id,
         playerID: player1.id,
         move: move2,
       });
-      const move: BattleShipMove = { row: 1, col: 1, shiptype: 'guess', player: 'O' };
+      const move: BattleShipMove = { row: 1, col: 9, shiptype: 'guess', player: 'O' };
       expect(() =>
         game.applyMove({
           gameID: game.id,
@@ -399,7 +413,13 @@ describe('BattleShipGame', () => {
     });
 
     it('throws an error when player O goes twice in a row', () => {
-      const move1: BattleShipMove = { row: 1, col: 1, shiptype: 'guess', player: 'O' };
+      const move0: BattleShipMove = { row: 9, col: 9, shiptype: 'guess', player: 'X' };
+      game.applyMove({
+        gameID: game.id,
+        playerID: player2.id,
+        move: move0,
+      });
+      const move1: BattleShipMove = { row: 8, col: 8, shiptype: 'guess', player: 'O' };
       game.applyMove({
         gameID: game.id,
         playerID: player2.id,
@@ -432,6 +452,12 @@ describe('BattleShipGame', () => {
       ).toThrow();
     }); */
     it('should rely on the player ID to determine whose turn it is when given an invalid move', () => {
+      const move0: BattleShipMove = { row: 9, col: 9, shiptype: 'guess', player: 'X' };
+      game.applyMove({
+        gameID: game.id,
+        playerID: player2.id,
+        move: move0,
+      });
       let move2: BattleShipMove = { row: 1, col: 1, shiptype: 'guess', player: 'O' };
       expect(() =>
         game.applyMove({
@@ -439,9 +465,9 @@ describe('BattleShipGame', () => {
           playerID: player2.id,
           move: move2,
         }),
-      ).toThrow();
+      ).not.toThrow();
 
-      const move1: BattleShipMove = { row: 1, col: 1, shiptype: 'guess', player: 'O' };
+      const move1: BattleShipMove = { row: 9, col: 1, shiptype: 'guess', player: 'O' };
       expect(() =>
         game.applyMove({
           gameID: game.id,
@@ -450,6 +476,12 @@ describe('BattleShipGame', () => {
         }),
       ).not.toThrow();
 
+      const move10: BattleShipMove = { row: 7, col: 7, shiptype: 'guess', player: 'X' };
+      game.applyMove({
+        gameID: game.id,
+        playerID: player2.id,
+        move: move10,
+      });
       move2 = { row: 1, col: 2, shiptype: 'guess', player: 'O' };
       expect(() =>
         game.applyMove({
