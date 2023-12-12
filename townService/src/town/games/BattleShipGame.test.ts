@@ -229,24 +229,6 @@ describe('BattleShipGame', () => {
       expect(game.state.winner).toBeUndefined();
     });
   });
-  /*
-  function placeShipsForPlayer(player2: Player , playerID: string) {
-    const shipTypes = ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'];
-    shipTypes.forEach((shiptype, index) => {
-      const move = {
-        row: index as BattleShipGridPosition,
-        col: 0 as BattleShipGridPosition,
-        shiptype: shiptype as BattleShip,
-        playerID,
-      };
-      game.applyMove({
-        gameID: game.id,
-        player2,
-        move,
-      });
-    });
-  }
-  */
 
   describe('[T2.2] applyMove(guess move)', () => {
     let player1: Player;
@@ -435,22 +417,6 @@ describe('BattleShipGame', () => {
       ).toThrow();
     });
 
-    /* it('throws an error when player O goes on an X space', () => {
-      const move1: BattleShipMove = { row: 1, col: 1, gamePiece: 'X' };
-      game.applyMove({
-        gameID: game.id,
-        playerID: player1.id,
-        move: move1,
-      });
-      const move2: BattleShipMove = { row: 1, col: 1, gamePiece: 'O' };
-      expect(() =>
-        game.applyMove({
-          gameID: game.id,
-          playerID: player2.id,
-          move: move2,
-        }),
-      ).toThrow();
-    }); */
     it('should rely on the player ID to determine whose turn it is when given an invalid move', () => {
       const move0: BattleShipMove = { row: 9, col: 9, shiptype: 'guess', player: 'X' };
       game.applyMove({
@@ -499,38 +465,6 @@ describe('BattleShipGame', () => {
         }),
       ).toThrow();
 
-      /* describe('applyMove [T2.3]', () => {
-        it('should throw an error if the move is out of turn for the player ID', () => {
-          const playerX = createPlayerForTesting();
-          const playerO = createPlayerForTesting();
-
-          const oMove: BattleShipMove = { row: 1, col: 1, gamePiece: 'O' };
-          expect(() =>
-            game.applyMove({
-              gameID: game.id,
-              playerID: playerO.id,
-              move: oMove,
-            }),
-          ).toThrow();
-
-          const xMove: BattleShipMove = { row: 1, col: 1, gamePiece: 'X' };
-          expect(() =>
-            game.applyMove({
-              gameID: game.id,
-              playerID: playerX.id,
-              move: xMove,
-            }),
-          ).not.toThrow();
-
-          expect(() =>
-            game.applyMove({
-              gameID: game.id,
-              playerID: playerX.id,
-              move: xMove,
-            }),
-          ).toThrow();
-        });
-      }); */
     });
   });
 });
