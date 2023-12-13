@@ -50,7 +50,7 @@ import BattleShipOBoard from './BattleShipOBoard';
  *    - Tie: description 'Game ended in a tie'
  *    - Our player won: description 'You won!'
  *    - Our player lost: description 'You lost :('
- * 
+ *
  * @param interactableID The ID of the interactable to render
  * @returns A JSX Element that renders the Battleship game area
  *

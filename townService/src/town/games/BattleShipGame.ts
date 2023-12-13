@@ -14,7 +14,7 @@ import Game from './Game';
 
 /**
  * A BattleshipGame is a Game that implements the rules of Battleship.
- * 
+ *
  * The game state is represented by a BattleShipGameState, which is a JSON object with the following properties:
  * - moves: an array of BattleShipMove objects, representing the moves made in the game so far
  * - x_board: an array of BattleShipGridPosition objects, representing the positions of X's ships
@@ -23,7 +23,7 @@ import Game from './Game';
  * - o_ships: an array of strings, representing the ships that O has not yet placed
  * - status: a string, representing the status of the game (WAITING_TO_START, IN_PROGRESS, or OVER)
  * - turn: a string, representing whose turn it is (X or O)
- * 
+ *
  * @see https://en.wikipedia.org/wiki/Battleship_(game)
  * @see BattleShipGameState
  * @see BattleShipMove
@@ -43,7 +43,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
 
   /**
    * Checks if the move is a hit
-   * 
+   *
    * @param move move to check if it is a hit
    * @returns true if the move is a hit
    * @returns false if the move is not a hit
@@ -67,7 +67,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
 
   /**
    * Updates the turn to the next player after a move is made by changing the state.turn
-   * 
+   *
    * @returns void
    */
   private _updateTurn() {
@@ -82,7 +82,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
   /**
    * Checks if the game is over by checking if the number of hits is greater than or equal to 17
    * Changes the state.status to OVER and the state.winner to the player who won
-   * 
+   *
    * @remarks 17 is the total number of hits needed to win the game
    * @returns void
    */
@@ -98,7 +98,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
 
   /**
    * Counts the number of hits for player X
-   * 
+   *
    * @returns number of hits for player X
    */
   private _countHitsX(): number {
@@ -117,7 +117,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
 
   /**
    * Counts the number of hits for player O
-   * 
+   *
    * @returns number of hits for player O
    */
   private _countHitsO(): number {
@@ -139,7 +139,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
    * - Check if it's the player's turn
    * - Check if the move is within the bounds of the board
    * - Check if the game is in progress
-   * 
+   *
    * @param move move to validate
    * @throws InvalidParametersError if the move is invalid
    */
@@ -167,7 +167,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
    * Logic for validating ship placement
    * throw game_not in progress error if game is in progress
    * throw out of bounds error if placement goes outside board
-   * 
+   *
    * @param move move to validate
    * @returns void
    * @throws InvalidParametersError if the move is invalid
@@ -185,7 +185,6 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
     } else if (move.move.player === 'O') {
       board = this.state.o_board;
     }
-    /* check this */
     for (const m of board)
       if (move.move.row === m.row && move.move.col === m.col) {
         throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
@@ -223,7 +222,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
 
   /**
    * Applies a move to the game state
-   * 
+   *
    * @remarks This method is called by the GameArea when a player makes a move
    * @param move move to apply
    * @returns void
@@ -319,7 +318,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
 
   /**
    * Adds a player to the game
-   * 
+   *
    * @remarks This method is called by the GameArea when a player joins the game
    * @param player player to join the game
    * @returns void
@@ -358,11 +357,11 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
 
   /**
    * Removes a player from the game
-   * 
+   *
    * @remarks This method is called by the GameArea when a player leaves the game
    * @param player player to leave the game
    * @returns void
-   * @throws InvalidParametersError if the player is not in the game 
+   * @throws InvalidParametersError if the player is not in the game
    */
   protected _leave(player: Player): void {
     if (this.state.x !== player.id && this.state.o !== player.id) {

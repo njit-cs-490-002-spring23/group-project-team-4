@@ -7,7 +7,7 @@ import { BattleShipGridPosition } from '../../../../types/CoveyTownSocket';
 
 /**
  * Props for the Battleship game component
- * 
+ *
  * @property gameAreaController - the controller for the Battleship game
  */
 export type BattleShipGameProps = {
@@ -64,7 +64,7 @@ const StyledBattleShipBoard = chakra(Container, {
 
 /**
  * A component that renders the Battleship board
- * 
+ *
  * @param gameAreaController - the controller for the Battleship game
  */
 export default function BattleShipDefaultBoard({

@@ -29,7 +29,7 @@ export default class BattleShipGameArea extends GameArea<BattleShipGame> {
    * If the game is over, record the outcome in this._history
    * If the game is not over, call this._emitAreaChanged (necessary to notify any listeners of a
    * state update, including any change to history)
-   * 
+   *
    * @param updatedState updated state of the game
    * @returns void
    */

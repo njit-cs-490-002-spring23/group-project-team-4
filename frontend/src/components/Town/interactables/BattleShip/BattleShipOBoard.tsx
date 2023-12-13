@@ -7,7 +7,7 @@ import { BattleShipGridPosition } from '../../../../types/CoveyTownSocket';
 
 /**
  * Props for the Battleship game component
- * 
+ *
  * @property gameAreaController - the controller for the Battleship game
  */
 
@@ -65,7 +65,7 @@ const StyledBattleShipBoard = chakra(Container, {
 
 /**
  * A component that renders the Battleship board
- * 
+ *
  * @param gameAreaController - the controller for the Battleship game
  * @returns the O board for the Battleship game
  */
@@ -88,7 +88,9 @@ export default function BattleShipOBoard({ gameAreaController }: BattleShipGameP
       if (gameAreaController.Ship !== 'guess') {
         await gameAreaController.makeMove(row, col, gameAreaController.Ship);
       }
-    } catch (error) {}
+    } catch (error) {
+      //do nothing
+    }
   };
 
   const renderSquare = (rowIndex: BattleShipGridPosition, colIndex: BattleShipGridPosition) => {
