@@ -1,7 +1,6 @@
-import { Button, chakra, Container, Grid } from '@chakra-ui/react';
-import React, { useState, useEffect, useRef } from 'react';
+import { Button, chakra, Container } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
 import BattleShipAreaController, {
-  BattleShipCell,
   BattleShipCell,
 } from '../../../../classes/interactable/BattleShipAreaController';
 import { BattleShipGridPosition } from '../../../../types/CoveyTownSocket';

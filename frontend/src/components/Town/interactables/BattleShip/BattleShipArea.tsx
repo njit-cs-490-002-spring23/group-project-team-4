@@ -6,7 +6,6 @@ import {
   ModalOverlay,
   useToast,
   Button,
-  Heading,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
@@ -15,7 +14,6 @@ import { InteractableID } from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
 import Leaderboard from '../Leaderboard';
 import BattleShipAreaController from '../../../../classes/interactable/BattleShipAreaController';
-import BattleShipBoard from '.';
 import BattleShipDefaultBoard from './BattleShipDefaultBoard';
 import BattleShipXGuessBoard from './BattleShipXGuess';
 import BattleShipXBoard from './BattleShipXBoard';
@@ -256,7 +254,7 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
     };
     determineStatusMsg(gameState);
   }, [gameAreaController, townController.ourPlayer, statusMsg, gameState, refreshFlag]);
-  // TODO - implement this component
+
   return (
     <>
       <Leaderboard results={gameState.history} />
