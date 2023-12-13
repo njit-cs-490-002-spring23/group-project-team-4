@@ -5,10 +5,18 @@ import BattleShipAreaController, {
 } from '../../../../classes/interactable/BattleShipAreaController';
 import { BattleShipGridPosition } from '../../../../types/CoveyTownSocket';
 
+/**
+ * Props for the Battleship game component
+ * 
+ * @property gameAreaController - the controller for the Battleship game
+ */
 export type BattleShipGameProps = {
   gameAreaController: BattleShipAreaController;
 };
 
+/**
+ * A component that will render the Battleship square, styled
+ */
 const StyledBattleShipSquare = chakra(Button, {
   baseStyle: {
     justifyContent: 'center',
@@ -56,6 +64,9 @@ const StyledBattleShipBoard = chakra(Container, {
 
 /**
  * A component that renders the Battleship board
+ * 
+ * @param gameAreaController - the controller for the Battleship game
+ * @returns the O Guess board for the Battleship game
  */
 export default function BattleShipOGuessBoard({
   gameAreaController,
@@ -96,6 +107,7 @@ export default function BattleShipOGuessBoard({
     );
   };
 
+  // renderRows() will render 10 rows of 10 squares each
   const renderRows = () => {
     const rows = [];
     for (let i = 0; i < 10; i++) {
