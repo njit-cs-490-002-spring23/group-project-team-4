@@ -84,7 +84,7 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
 
   private _countHitsO(): number {
     let hitCountO = 0;
-    const board = this.state.x_board;
+    const board = this.state.o_board;
     for (const move of this.state.moves) {
       for (let i = 0; i < board.length; i += 1)
         if (move.player === 'X') {
@@ -145,27 +145,27 @@ export default class BattleShipGame extends Game<BattleShipGameState, BattleShip
       }
     switch (move.move.shiptype) {
       case 'carrier':
-        if (move.move.col > 4) {
-          throw new InvalidParametersError('Index out of bounds');
-        }
-        break;
-      case 'battleship':
         if (move.move.col > 5) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
-      case 'criuser':
+      case 'battleship':
         if (move.move.col > 6) {
+          throw new InvalidParametersError('Index out of bounds');
+        }
+        break;
+      case 'criuser':
+        if (move.move.col > 7) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
       case 'submarine':
-        if (move.move.col > 6) {
+        if (move.move.col > 7) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
       case 'destroyer':
-        if (move.move.col > 7) {
+        if (move.move.col > 8) {
           throw new InvalidParametersError('Index out of bounds');
         }
         break;
