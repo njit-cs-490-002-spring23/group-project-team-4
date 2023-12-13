@@ -317,6 +317,14 @@ function BattleShipArea({ interactableID }: { interactableID: InteractableID }):
           {'Player 2 ' + playerO}
         </li>
       </ul>
+      <div>Only Rule Changes are 10x10 grid and</div>
+      <div>if Player correctly calls hit they go again</div>
+      <a
+        target='_blank'
+        href='https://www.hasbro.com/common/instruct/battleship.pdf'
+        rel='noreferrer'>
+        Click Here for Rules!
+      </a>
     </>
   );
 }
