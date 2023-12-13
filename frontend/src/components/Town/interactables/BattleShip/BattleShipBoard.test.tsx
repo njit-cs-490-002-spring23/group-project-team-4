@@ -1,8 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import TicTacToeBoard from './TicTacToeBoard';
+import TicTacToeBoard from '.';
 import TicTacToeAreaController, {
   TicTacToeCell,
-} from '../../../../classes/interactable/TicTacToeAreaController';
+} from '../../../../classes/interactable/BattleShipAreaController';
 import { mock } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
 import React from 'react';

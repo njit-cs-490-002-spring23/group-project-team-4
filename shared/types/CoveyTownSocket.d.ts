@@ -38,7 +38,7 @@ export interface Player {
   location: PlayerLocation;
 };
 
-export type XY = { x: number, y: number };
+export type XY = { x: number; y: number };
 
 export interface PlayerLocation {
   /* The CENTER x coordinate of this player's location */
@@ -73,7 +73,7 @@ export interface ViewingArea extends Interactable {
   elapsedTimeSec: number;
 }
 
-export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER';
+export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' |'GUESSING'| 'OVER';
 /**
  * Base type for the state of a game
  */
@@ -97,24 +97,29 @@ export interface GameMove<MoveType> {
   move: MoveType;
 }
 
+/**
+ * BattleShip grid position type (0-9)
+ * @see BattleShipMove
+ */
 export type BattleShipGridPosition = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
-export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'destroyer';
+/**
+ * BattleShip ship type
+ * @see BattleShipMove
+ */
+export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'destroyer' | 'guess';
 
 
 /**
  * Type for moves in BattleShip
  * Ship placement coordinate starts from left
+ * player for who made the move
  */
-export interface BattleShipPlacementMove {
+export interface BattleShipMove {
   row: BattleShipGridPosition;
   col: BattleShipGridPosition;
-  shiptype: BattleShip;
-}
-
-export interface BattleShipGuessMove {
-  row: BattleShipGridPosition;
-  col: BattleShipGridPosition;
+  shiptype: BattleShip | undefined;
+  player: 'X' | 'O'
 }
 
 /**
@@ -123,13 +128,18 @@ export interface BattleShipGuessMove {
  * The first player to join the game is x, the second is o
  * moves will take a record of player guesses
  * board will keep track of player ship placements
+ * 
+ * @see WinnableGameState
  */
 export interface BattleShipGameState extends WinnableGameState {
-  moves: ReadonlyArray<BattleShipGuessMove>;
+  moves: ReadonlyArray<BattleShipMove>;
   x?: PlayerID;
   o?: PlayerID;
-  board: ReadOnlyArray<BattleShipPlacementMove>;
-  ships: ReadonlyArray<BattleShip>;
+  x_board: ReadOnlyArray<BattleShipMove>;
+  o_board: ReadOnlyArray<BattleShipMove>;
+  x_ships: ReadonlyArray<BattleShip>;
+  o_ships: ReadonlyArray<BattleShip>;
+  turn: 'X' | 'O';
 }
 
 export type InteractableID = string;
@@ -187,7 +197,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<BattleShipMove> | LeaveGameCommand;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -207,8 +217,7 @@ export interface GameMoveCommand<MoveType> {
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
-  CommandType extends GameMoveCommand<BattleShipGuessMove> ? undefined :
-  CommandType extends GameMoveCommand<BattleShipPlacementMove> ? undefined :
+  CommandType extends GameMoveCommand<BattleShipMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
   never;
 

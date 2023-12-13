@@ -5,7 +5,7 @@ import useTownController from '../../hooks/useTownController';
 import SocialSidebar from '../SocialSidebar/SocialSidebar';
 import NewConversationModal from './interactables/NewCoversationModal';
 import TownGameScene from './TownGameScene';
-import TicTacToeAreaWrapper from './interactables/TicTacToe/TicTacToeArea';
+import TicTacToeAreaWrapper from './interactables/BattleShip/BattleShipArea';
 
 export default function TownMap(): JSX.Element {
   const coveyTownController = useTownController();

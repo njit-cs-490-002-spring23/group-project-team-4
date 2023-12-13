@@ -9,19 +9,24 @@ import {
 import Player from '../../lib/Player';
 import {
   GameInstanceID,
-  TicTacToeGameState,
-  TicTacToeMove,
+  BattleShipGameState,
+  BattleShipMove,
   TownEmitter,
 } from '../../types/CoveyTownSocket';
-import TicTacToeGameArea from './TicTacToeGameArea';
-import * as TicTacToeGameModule from './TicTacToeGame';
+import TicTacToeGameArea from './BattleShipGameArea';
+import * as TicTacToeGameModule from './BattleShipGame';
 import Game from './Game';
 
-class TestingGame extends Game<TicTacToeGameState, TicTacToeMove> {
+class TestingGame extends Game<BattleShipGameState, BattleShipMove> {
   public constructor() {
     super({
-      moves: [],
+      moves: [], // An empty array, as there are no moves at the start
+      x_board: [], // Assuming this represents the game board for player X
+      o_board: [], // Assuming this represents the game board for player O
+      x_ships: ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'], // List of ships for player X
+      o_ships: ['battleship', 'carrier', 'criuser', 'destroyer', 'submarine'], // List of ships for player O
       status: 'WAITING_TO_START',
+      turn: 'X',
     });
   }
 

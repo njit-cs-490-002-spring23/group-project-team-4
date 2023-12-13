@@ -21,6 +21,6 @@
     }
   },
   "mutate": [
-    "src/classes/interactable/TicTacToeAreaController.ts"
+    "src/classes/interactable/BattleShipAreaController.ts"
   ]
 }
