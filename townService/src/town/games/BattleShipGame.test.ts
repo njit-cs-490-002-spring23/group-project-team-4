@@ -9,7 +9,7 @@ import {
 import BattleShipGame from './BattleShipGame';
 
 import InvalidParametersError from '../../lib/InvalidParametersError';
-import MOVE_NOT_YOUR_TURN_MESSAGE from '../../lib/InvalidParametersError'
+import MOVE_NOT_YOUR_TURN_MESSAGE from '../../lib/InvalidParametersError';
 
 describe('BattleShipGame', () => {
   let game: BattleShipGame;
@@ -29,7 +29,6 @@ describe('BattleShipGame', () => {
         expect(game.state.x_board).toEqual([]);
         expect(game.state.o_board).toEqual([]);
         expect(game.state.x_ships).toEqual([
-          
           'carrier',
           'battleship',
           'criuser',
@@ -82,16 +81,16 @@ describe('BattleShipGame', () => {
           player2 = createPlayerForTesting();
           game.join(player1);
           game.join(player2);
-          const move1: BattleShipMove = {row: 1, col: 1, shiptype: "battleship", player: 'X'};
-          const move2: BattleShipMove = {row: 1, col: 1, shiptype: "battleship", player: 'O'};
-          const move3: BattleShipMove = {row: 2, col: 1, shiptype: "carrier", player: 'X'};
-          const move4: BattleShipMove = {row: 2, col: 1, shiptype: "carrier", player: 'O'};
-          const move5: BattleShipMove = {row: 3, col: 1, shiptype: "criuser", player: 'X'};
-          const move6: BattleShipMove = {row: 3, col: 1, shiptype: "criuser", player: 'O'};
-          const move7: BattleShipMove = {row: 4, col: 1, shiptype: "submarine", player: 'X'};
-          const move8: BattleShipMove = {row: 4, col: 1, shiptype: "submarine", player: 'O'};
-          const move9: BattleShipMove = {row: 5, col: 1, shiptype: "destroyer", player: 'X'};
-          const move10: BattleShipMove = {row: 5, col: 1, shiptype: "destroyer", player: 'O'};
+          const move1: BattleShipMove = { row: 1, col: 1, shiptype: 'battleship', player: 'X' };
+          const move2: BattleShipMove = { row: 1, col: 1, shiptype: 'battleship', player: 'O' };
+          const move3: BattleShipMove = { row: 2, col: 1, shiptype: 'carrier', player: 'X' };
+          const move4: BattleShipMove = { row: 2, col: 1, shiptype: 'carrier', player: 'O' };
+          const move5: BattleShipMove = { row: 3, col: 1, shiptype: 'criuser', player: 'X' };
+          const move6: BattleShipMove = { row: 3, col: 1, shiptype: 'criuser', player: 'O' };
+          const move7: BattleShipMove = { row: 4, col: 1, shiptype: 'submarine', player: 'X' };
+          const move8: BattleShipMove = { row: 4, col: 1, shiptype: 'submarine', player: 'O' };
+          const move9: BattleShipMove = { row: 5, col: 1, shiptype: 'destroyer', player: 'X' };
+          const move10: BattleShipMove = { row: 5, col: 1, shiptype: 'destroyer', player: 'O' };
           game.applyMove({
             gameID: game.id,
             playerID: player1.id,
@@ -99,9 +98,9 @@ describe('BattleShipGame', () => {
           });
           game.applyMove({
             gameID: game.id,
-           playerID: player2.id,
-           move: move2,
-           });
+            playerID: player2.id,
+            move: move2,
+          });
           game.applyMove({
             gameID: game.id,
             playerID: player1.id,
@@ -109,40 +108,39 @@ describe('BattleShipGame', () => {
           });
           game.applyMove({
             gameID: game.id,
-           playerID: player2.id,
-           move: move4,
-      });
+            playerID: player2.id,
+            move: move4,
+          });
           game.applyMove({
-        gameID: game.id,
-        playerID: player1.id,
-        move: move5,
-      });
+            gameID: game.id,
+            playerID: player1.id,
+            move: move5,
+          });
           game.applyMove({
-        gameID: game.id,
-        playerID: player2.id,
-        move: move6,
-      });
+            gameID: game.id,
+            playerID: player2.id,
+            move: move6,
+          });
           game.applyMove({
-        gameID: game.id,
-        playerID: player1.id,
-        move: move7,
-      });
+            gameID: game.id,
+            playerID: player1.id,
+            move: move7,
+          });
           game.applyMove({
-        gameID: game.id,
-        playerID: player2.id,
-        move: move8,
-      });
+            gameID: game.id,
+            playerID: player2.id,
+            move: move8,
+          });
           game.applyMove({
-        gameID: game.id,
-        playerID: player1.id,
-        move: move9,
-      });
+            gameID: game.id,
+            playerID: player1.id,
+            move: move9,
+          });
           game.applyMove({
-        gameID: game.id,
-        playerID: player2.id,
-        move: move10,
-      });
-
+            gameID: game.id,
+            playerID: player2.id,
+            move: move10,
+          });
         });
         it('[T2.1] should correctly handle a ship placement move', () => {
           const plmove: BattleShipMove = { row: 2, col: 3, shiptype: 'guess', player: 'X' };
@@ -154,7 +152,7 @@ describe('BattleShipGame', () => {
           const pl2move: BattleShipMove = { row: 1, col: 1, shiptype: 'battleship', player: 'X' };
           expect(game.state.moves).toHaveLength(1);
           expect(game.state.x_board[0]).toEqual(pl2move);
-         // expect(game.state.o_board).toEqual([]);
+          // expect(game.state.o_board).toEqual([]);
           expect(game.state.status).toEqual('IN_PROGRESS');
         });
       });
@@ -238,16 +236,16 @@ describe('BattleShipGame', () => {
       player2 = createPlayerForTesting();
       game.join(player1);
       game.join(player2);
-      const move1: BattleShipMove = {row: 1, col: 1, shiptype: "battleship", player: 'X'};
-      const move2: BattleShipMove = {row: 1, col: 1, shiptype: "battleship", player: 'O'};
-      const move3: BattleShipMove = {row: 2, col: 1, shiptype: "carrier", player: 'X'};
-      const move4: BattleShipMove = {row: 2, col: 1, shiptype: "carrier", player: 'O'};
-      const move5: BattleShipMove = {row: 3, col: 1, shiptype: "criuser", player: 'X'};
-      const move6: BattleShipMove = {row: 3, col: 1, shiptype: "criuser", player: 'O'};
-      const move7: BattleShipMove = {row: 4, col: 1, shiptype: "submarine", player: 'X'};
-      const move8: BattleShipMove = {row: 4, col: 1, shiptype: "submarine", player: 'O'};
-      const move9: BattleShipMove = {row: 5, col: 1, shiptype: "destroyer", player: 'X'};
-      const move10: BattleShipMove = {row: 5, col: 1, shiptype: "destroyer", player: 'O'};
+      const move1: BattleShipMove = { row: 1, col: 1, shiptype: 'battleship', player: 'X' };
+      const move2: BattleShipMove = { row: 1, col: 1, shiptype: 'battleship', player: 'O' };
+      const move3: BattleShipMove = { row: 2, col: 1, shiptype: 'carrier', player: 'X' };
+      const move4: BattleShipMove = { row: 2, col: 1, shiptype: 'carrier', player: 'O' };
+      const move5: BattleShipMove = { row: 3, col: 1, shiptype: 'criuser', player: 'X' };
+      const move6: BattleShipMove = { row: 3, col: 1, shiptype: 'criuser', player: 'O' };
+      const move7: BattleShipMove = { row: 4, col: 1, shiptype: 'submarine', player: 'X' };
+      const move8: BattleShipMove = { row: 4, col: 1, shiptype: 'submarine', player: 'O' };
+      const move9: BattleShipMove = { row: 5, col: 1, shiptype: 'destroyer', player: 'X' };
+      const move10: BattleShipMove = { row: 5, col: 1, shiptype: 'destroyer', player: 'O' };
       game.applyMove({
         gameID: game.id,
         playerID: player1.id,
@@ -355,7 +353,7 @@ describe('BattleShipGame', () => {
         playerID: player2.id,
         move: move2,
       });
-      
+
       const move: BattleShipMove = { row: 1, col: 9, shiptype: 'guess', player: 'X' };
       expect(() =>
         game.applyMove({
@@ -464,7 +462,6 @@ describe('BattleShipGame', () => {
           move: move2,
         }),
       ).toThrow();
-
     });
   });
 });
