@@ -24,6 +24,15 @@ export default class BattleShipGameArea extends GameArea<BattleShipGame> {
     return 'BattleShipArea';
   }
 
+  /**
+   * Handle a state update from the game.
+   * If the game is over, record the outcome in this._history
+   * If the game is not over, call this._emitAreaChanged (necessary to notify any listeners of a
+   * state update, including any change to history)
+   * 
+   * @param updatedState updated state of the game
+   * @returns void
+   */
   private _stateUpdated(updatedState: GameInstance<BattleShipGameState>) {
     if (updatedState.state.status === 'OVER') {
       // If we haven't yet recorded the outcome, do so now.

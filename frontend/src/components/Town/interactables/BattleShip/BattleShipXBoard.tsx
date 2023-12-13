@@ -5,10 +5,18 @@ import BattleShipAreaController, {
 } from '../../../../classes/interactable/BattleShipAreaController';
 import { BattleShipGridPosition } from '../../../../types/CoveyTownSocket';
 
+/**
+ * Props for the Battleship game component
+ * 
+ * @property gameAreaController - the controller for the Battleship game
+ */
 export type BattleShipGameProps = {
   gameAreaController: BattleShipAreaController;
 };
 
+/**
+ * A component that will render the Battleship square, styled
+ */
 const StyledBattleShipSquare = chakra(Button, {
   baseStyle: {
     justifyContent: 'center',
@@ -56,6 +64,9 @@ const StyledBattleShipBoard = chakra(Container, {
 
 /**
  * A component that renders the Battleship board
+ * 
+ * @param gameAreaController - the controller for the Battleship game
+ * @returns the X board for the Battleship game
  */
 export default function BattleShipXBoard({ gameAreaController }: BattleShipGameProps): JSX.Element {
   const [board, setBoard] = useState(gameAreaController.xBoard);
@@ -79,6 +90,7 @@ export default function BattleShipXBoard({ gameAreaController }: BattleShipGameP
     } catch (error) {}
   };
 
+  // renderSquare is a helper function that will render a single square on the board
   const renderSquare = (rowIndex: BattleShipGridPosition, colIndex: BattleShipGridPosition) => {
     const cellValue: BattleShipCell = board[rowIndex][colIndex];
 
@@ -96,6 +108,7 @@ export default function BattleShipXBoard({ gameAreaController }: BattleShipGameP
     );
   };
 
+  // renderRows is a helper function that will render all the rows on the board
   const renderRows = () => {
     const rows = [];
     for (let i = 0; i < 10; i++) {

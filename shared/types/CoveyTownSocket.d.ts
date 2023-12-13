@@ -97,8 +97,16 @@ export interface GameMove<MoveType> {
   move: MoveType;
 }
 
+/**
+ * BattleShip grid position type (0-9)
+ * @see BattleShipMove
+ */
 export type BattleShipGridPosition = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
+/**
+ * BattleShip ship type
+ * @see BattleShipMove
+ */
 export type BattleShip = 'battleship' | 'carrier' | 'criuser' | 'submarine' | 'destroyer' | 'guess';
 
 
@@ -120,6 +128,8 @@ export interface BattleShipMove {
  * The first player to join the game is x, the second is o
  * moves will take a record of player guesses
  * board will keep track of player ship placements
+ * 
+ * @see WinnableGameState
  */
 export interface BattleShipGameState extends WinnableGameState {
   moves: ReadonlyArray<BattleShipMove>;

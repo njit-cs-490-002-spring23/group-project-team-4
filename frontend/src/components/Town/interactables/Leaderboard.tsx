@@ -12,9 +12,8 @@ import { GameResult } from '../../../types/CoveyTownSocket';
  *
  * The table is sorted by the number of wins, with the player with the most wins at the top.
  *
- * @returns
+ * @returns a JSX Element that renders the leaderboard
  */
 export default function Leaderboard({ results }: { results: GameResult[] }): JSX.Element {
-  //TODO - implement this component (delete what's here first)
   return <>{results.length} results</>;
 }

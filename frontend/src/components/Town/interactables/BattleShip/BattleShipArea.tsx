@@ -21,12 +21,12 @@ import BattleShipOGuessBoard from './BattleShipOGuess';
 import BattleShipOBoard from './BattleShipOBoard';
 
 /**
- * The TicTacToeArea component renders the TicTacToe game area.
+ * The BattleShip component renders the Battleship game area.
  * It renders the current state of the area, optionally allowing the player to join the game.
  *
  * It uses Chakra-UI components (does not use other GUI widgets)
  *
- * It uses the TicTacToeAreaController to get the current state of the game.
+ * It uses the BattleShipAreaController to get the current state of the game.
  * It listens for the 'gameUpdated' and 'gameEnd' events on the controller, and re-renders accordingly.
  * It subscribes to these events when the component mounts, and unsubscribes when the component unmounts. It also unsubscribes when the gameAreaController changes.
  *
@@ -44,12 +44,15 @@ import BattleShipOBoard from './BattleShipOBoard';
  *    - Before calling joinGame method, the button is disabled and has the property isLoading set to true, and is re-enabled when the method call completes
  *    - If the method call fails, a toast is displayed with the error message as the description of the toast (and status 'error')
  *    - Once the player joins the game, the button dissapears
- * - The TicTacToeBoard component, which is passed the current gameAreaController as a prop (@see TicTacToeBoard.tsx)
+ * - The BattleShipBoard component, which is passed the current gameAreaController as a prop (@see BattleShipDefaultBoard.tsx)
  *
  * - When the game ends, a toast is displayed with the result of the game:
  *    - Tie: description 'Game ended in a tie'
  *    - Our player won: description 'You won!'
  *    - Our player lost: description 'You lost :('
+ * 
+ * @param interactableID The ID of the interactable to render
+ * @returns A JSX Element that renders the Battleship game area
  *
  */
 
