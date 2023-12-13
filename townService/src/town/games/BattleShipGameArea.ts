@@ -12,7 +12,6 @@ import {
   BattleShipGameState,
 } from '../../types/CoveyTownSocket';
 import GameArea from './GameArea';
-import BattleShip from './BattleShipGame';
 import BattleShipGame from './BattleShipGame';
 
 /**

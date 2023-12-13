@@ -1,15 +1,7 @@
 import { createPlayerForTesting } from '../../TestUtils';
 import Player from '../../lib/Player';
-import {
-  BattleShip,
-  BattleShipGridPosition,
-  BattleShipMove,
-  GameState,
-} from '../../types/CoveyTownSocket';
+import { BattleShipMove } from '../../types/CoveyTownSocket';
 import BattleShipGame from './BattleShipGame';
-
-import InvalidParametersError from '../../lib/InvalidParametersError';
-import MOVE_NOT_YOUR_TURN_MESSAGE from '../../lib/InvalidParametersError';
 
 describe('BattleShipGame', () => {
   let game: BattleShipGame;
