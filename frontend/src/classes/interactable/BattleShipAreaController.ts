@@ -388,7 +388,6 @@ export default class BattleShipAreaController extends GameAreaController<
           ) {
             const row = newModel.game?.state.moves[newMove].row;
             const col = newModel.game?.state.moves[newMove].col;
-            // newBoard[row][col] = newModel.game?.state.moves[newMove].gamePiece;
             // if the value at row and col is 0, then change it to 3 to indicate that it is a miss
             if (this.oBoard[row][col] === 0) {
               newBoard[row][col] = 'M';
@@ -415,7 +414,6 @@ export default class BattleShipAreaController extends GameAreaController<
           ) {
             const row = newModel.game?.state.moves[newMove].row;
             const col = newModel.game?.state.moves[newMove].col;
-            // newBoard[row][col] = newModel.game?.state.moves[newMove].gamePiece;
             // if the value at row and col is 0, then change it to 3 to indicate that it is a miss
             if (this.xBoard[row][col] === 0) {
               newBoard[row][col] = 'M';
@@ -434,9 +432,8 @@ export default class BattleShipAreaController extends GameAreaController<
           }
         }
       }
-
-      this.emit('boardChanged', newBoard);
       this.emit('boardChanged', updatedBoard);
+      this.emit('boardChanged', newBoard);
       if (newModel.game?.state.turn !== this.whoseTurn) {
         this.emit('turnChanged', true);
       } else {
